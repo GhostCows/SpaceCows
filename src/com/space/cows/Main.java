@@ -68,17 +68,20 @@ public class Main {
 			char c1 = num.charAt(0);
 			char c2 = num.charAt(1);
 
-			if(c1 >= '0' && c1 <= '9') {
+			if(Character.isDigit(c1)) {
 
 				y = Character.getNumericValue(c1) - 1;
 				x = ((int) c2) - 65;
 
 			} else {
 
-				x = Character.getNumericValue(c1) - 1;
-				y = ((int) c2) - 65;
+				x = Character.getNumericValue(c2) - 1;
+				y = ((int) c1) - 65;
 
 			}
+
+			System.out.println(x);
+			System.out.println(y);
 
 			int index = yourTurn ? 0 : 1;
 
