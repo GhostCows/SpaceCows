@@ -7,102 +7,118 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static String[] prevs = new String[2];
+	private static String[] prevs = new String[2];
 
-    public static void main(String[] str) {
+	public static void main(String[] str) {
 
-        prevs[0] = "";
-        prevs[1] = "";
+		prevs[0] = "";
+		prevs[1] = "";
 
-        Scanner scanner = new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in);
 
-        int[][] board = new int[7][7];
+		int[][] board = new int[7][7];
 
-        boolean yourTurn = true;
+		boolean yourTurn = true;
 
-        do {
+		do {
 
-            if (yourTurn) {
-                println("É a sua vez!");
-            } else {
-                println("É a vez do adversário!");
-            }
+			if (yourTurn) {
+				println("É a sua vez!");
+			} else {
+				println("É a vez do adversário!");
+			}
 
-            printBoard(board);
+			printBoard(board);
 
-            println("Onde você vai jogar? (lc)");
+			println("Onde você vai jogar?");
 
-            String pos = scanner.nextLine();
+			String pos = scanner.nextLine();
 
-            if (play(pos, board, yourTurn)) {
+			if (play(pos, board, yourTurn)) {
 
-                yourTurn = !yourTurn;
+				yourTurn = !yourTurn;
 
-            }
+			}
 
-        } while (!gameEnd(board));
+		} while (!gameEnd(board));
 
-        if (!yourTurn) {
-            println("Você Ganhou! Parabéns");
-        } else {
-            println("Que pena, você perdeu...");
-        }
+		if (!yourTurn) {
+			println("Você Ganhou! Parabéns");
+		} else {
+			println("Que pena, você perdeu...");
+		}
 
-    }
+	}
 
-    private static boolean play(String num, int[][] board, boolean yourTurn) {
+	private static boolean play(String num, int[][] board, boolean yourTurn) {
 
-        boolean valid = true;
+		num = num.toUpperCase();
 
-        if (num.length() != 2) {
-            println("O número deve conter dois dígitos!");
-        } else {
+		boolean valid = true;
 
-            String sx = ((Character) num.charAt(1)).toString();
-            int x = Integer.parseInt(sx) -
-                    1;
-            String sy = ((Character) num.charAt(0)).toString();
-            int y = Integer.parseInt(sy) - 1;
+		if (num.length() != 2) {
+			println("O número deve conter dois dígitos!");
+		} else {
 
-            int index = yourTurn ? 0 : 1;
+			//‒
+			//—
 
-            if(board[x][y] != 0) {
+			int x, y;
 
-                println("Você só pode jogar em slots vazios!");
+			char c1 = num.charAt(0);
+			char c2 = num.charAt(1);
 
-                valid = false;
+			if(c1 >= '0' && c1 <= '9') {
 
-            } else if (prevs[index].equals(num)) {
+				y = Character.getNumericValue(c1) - 1;
+				x = ((int) c2) - 65;
 
-                println("Você não pode jogar duas vezes no mesmo lugar");
+			} else {
 
-                valid = false;
+				x = Character.getNumericValue(c1) - 1;
+				y = ((int) c2) - 65;
 
-            } else {
+			}
 
-                prevs[index] = num;
+			int index = yourTurn ? 0 : 1;
 
-                for (int i = Math.max(x - 1, 0); i <= Math.min(x + 1, 6); i++) {
-                    for (int j = Math.max(y - 1, 0); j <= Math.min(y + 1, 6); j++) {
+			if (board[x][y] != 0) {
 
-                        if (board[i][j] == 0) {
-                            if (yourTurn) {
-                                board[i][j] = 1;
-                            } else {
-                                board[i][j] = 2;
-                            }
-                        } else {
-                            board[i][j] = 0;
-                        }
-                    }
-                }
+				println("Você só pode jogar em slots vazios!");
 
-            }
-        }
+				valid = false;
 
-        return valid;
+			} else if (prevs[index].equals(num)) {
 
-    }
+				println("Você não pode jogar duas vezes no mesmo lugar");
+
+				valid = false;
+
+			} else {
+
+				prevs[index] = num;
+
+				for (int i = Math.max(x - 1, 0); i <= Math.min(x + 1, 6); i++) {
+					for (int j = Math.max(y - 1, 0); j <= Math.min(y + 1, 6); j++) {
+
+						if (board[i][j] == 0) {
+							if (yourTurn) {
+								board[i][j] = 1;
+							} else {
+								board[i][j] = 2;
+							}
+						} else {
+							board[i][j] = 0;
+						}
+					}
+				}
+
+			}
+		}
+
+		return valid;
+
+	}
 
     /*private static String aiTurn(int[][] board) {
 
@@ -116,56 +132,74 @@ public class Main {
 
     }*/
 
-    private static void sleep(int ms) {
+	private static void sleep(int ms) {
 
-        long time = System.currentTimeMillis();
+		long time = System.currentTimeMillis();
 
-        while(time + ms > System.currentTimeMillis());
+		while (time + ms > System.currentTimeMillis()) ;
 
-    }
+	}
 
-    private static void println(String msg) {
+	private static void println(String msg) {
 
-        char[] chars = msg.toCharArray();
+		char[] chars = msg.toCharArray();
 
-        for (int i = 0; i < chars.length; i++) {
-            System.out.print(chars[i]);
-            sleep(50);
-        }
+		for (int i = 0; i < chars.length; i++) {
+			System.out.print(chars[i]);
+			sleep(50);
+		}
 
-        System.out.print('\n');
+		System.out.print('\n');
 
-    }
+	}
 
-    private static void printBoard(int[][] board) {
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[i].length; j++) {
+	private static void printBoard(int[][] board) {
 
-                System.out.print(board[j][i] + " ");
-                sleep(10);
+		System.out.println("   1 2 3 4 5 6 7");
+		System.out.println(" +--------------");
 
-            }
-            System.out.print("\n");
-        }
-    }
+		for (int i = 0; i < board.length; i++) {
 
-    private static boolean gameEnd(int[][] board) {
+			System.out.print(((char) (i + 65)) + "| ");
 
-        int p1 = 0;
-        int p2 = 0;
+			for (int j = 0; j < board[i].length; j++) {
 
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                int value = board[i][j];
-                if (value == 1) {
-                    p1++;
-                } else if (value == 2) {
-                    p2++;
-                }
-            }
-        }
+				switch (board[j][i]) {
+					case 0:
+						System.out.print('º');
+						break;
+					case 1:
+						System.out.print('#');
+						break;
+					case 2:
+						System.out.print('@');
+				}
+				System.out.print(' ');
+				sleep(10);
 
-        return p1 >= 25 || p2 >= 25;
+			}
+			System.out.print("\n");
+		}
+	}
 
-    }
+	private static boolean gameEnd(int[][] board) {
+
+		int p1 = 0;
+		int p2 = 0;
+
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				int value = board[i][j];
+				if (value == 1) {
+					p1++;
+				} else if (value == 2) {
+					p2++;
+				}
+			}
+		}
+
+		return p1 >= 25 || p2 >= 25;
+
+	}
+
 }
