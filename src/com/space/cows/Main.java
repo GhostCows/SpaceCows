@@ -28,9 +28,15 @@ public class Main {
 
 		String gamemode = scanner.next().toUpperCase().substring(0, 2);
 
-		System.out.println("What difficulty would you want? (0-2)");
+		int difficulty = 0;
 
-		int difficulty = scanner.nextInt() % 3;
+		if(gamemode.matches(".*[CA].*")) {
+
+			System.out.println("What difficulty would you want? (0-2)");
+
+			difficulty = scanner.nextInt() % 3;
+
+		}
 
 		do {
 
