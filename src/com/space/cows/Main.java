@@ -40,6 +40,11 @@ public class Main {
 
 		do {
 
+			println("Placar:");
+			int[] points = points(board);
+			println("# - " + points[0]);
+			println("@ - " + points[1]);
+
 			if (yourTurn) {
 				println("É a sua vez!");
 			} else {
