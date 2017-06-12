@@ -7,6 +7,7 @@ import java.util.*;
  */
 public class Main {
 
+	private static final int SIZE = 7;
 
 	private static final Random random = new Random();
 
@@ -19,7 +20,7 @@ public class Main {
 
 		Scanner scanner = new Scanner(System.in);
 
-		int[][] board = new int[7][7];
+		int[][] board = new int[SIZE][SIZE];
 
 		boolean yourTurn = true;
 
@@ -29,7 +30,7 @@ public class Main {
 
 		System.out.println("What difficulty would you want? (0-2)");
 
-		int difficulty = scanner.nextInt() % 10;
+		int difficulty = scanner.nextInt() % 3;
 
 		do {
 
@@ -117,8 +118,8 @@ public class Main {
 
 			prevs[index] = move;
 
-			for (int i = Math.max(x - 1, 0); i <= Math.min(x + 1, 6); i++) {
-				for (int j = Math.max(y - 1, 0); j <= Math.min(y + 1, 6); j++) {
+			for (int i = Math.max(x - 1, 0); i <= Math.min(x + 1, SIZE - 1); i++) {
+				for (int j = Math.max(y - 1, 0); j <= Math.min(y + 1, SIZE - 1); j++) {
 
 					if (board[i][j] == 0) {
 						if (yourTurn) {
@@ -140,7 +141,7 @@ public class Main {
 
 	private static int[] aiTurn(int[][] board, boolean yourTurn, int difficulty, int[][] prevs) {
 
-		int[] move = new int[2];
+		int[] move;
 
 		int[][][] analizedBoard = analizeBoard(board, yourTurn);
 
@@ -153,10 +154,10 @@ public class Main {
 		int maxBestValue = Integer.MIN_VALUE;
 		ArrayList<Integer[]> maxBestIds = new ArrayList<>();
 
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < SIZE; i++) {
 			int[][] line = analizedBoard[i];
 
-			for (int j = 0; j < 7; j++) {
+			for (int j = 0; j < SIZE; j++) {
 				int[] column = line[j];
 
 				Integer[] pos = new Integer[2];
@@ -218,15 +219,15 @@ public class Main {
 
 		int[] points = points(board);
 		int turn = yourTurn ? 1 : 0;
-		int win = 25;
+		int win = (int) Math.ceil(SIZE * SIZE / 2);
 
 		if (difficulty > 0 &&
-				points[turn] + maxLucroValue >= win - 4) {
+				points[turn] + maxLucroValue >= win) {
 
 			move = randomID(maxLucroIds);
 
 		} else if (difficulty > 1 &&
-				points[1 - turn] + 4 >= win) {
+				points[1 - turn] + Math.ceil(SIZE / 3) >= win) {
 
 			move = randomID(maxVantagemIds);
 
@@ -242,10 +243,10 @@ public class Main {
 
 	private static int[][][] analizeBoard(int[][] board, boolean yourTurn) {
 
-		int[][][] moves = new int[7][7][4];
+		int[][][] moves = new int[SIZE][SIZE][2];
 
-		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 7; j++) {
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
 
 				if (board[i][j] == 0) {
 
@@ -269,8 +270,8 @@ public class Main {
 
 		int[] move = new int[2];
 
-		for (int i = Math.max(x - 1, 0); i <= Math.min(x + 1, 6); i++) {
-			for (int j = Math.max(y - 1, 0); j <= Math.min(y + 1, 6); j++) {
+		for (int i = Math.max(x - 1, 0); i <= Math.min(x + 1, SIZE - 1); i++) {
+			for (int j = Math.max(y - 1, 0); j <= Math.min(y + 1, SIZE - 1); j++) {
 
 				int value = board[i][j];
 
@@ -313,14 +314,24 @@ public class Main {
 
 	private static void printBoard(int[][] board) {
 
-		System.out.println("   1 2 3 4 5 6 7");
-		System.out.println(" +--------------");
+		StringBuilder top = new StringBuilder("  ");
+		StringBuilder line = new StringBuilder(" +");
 
-		for (int i = 0; i < board.length; i++) {
+		for (int i = 1; i <= SIZE; i++) {
+
+			top.append(" ").append(i);
+			line.append("--");
+
+		}
+
+		System.out.println(top);
+		System.out.println(line);
+
+		for (int i = 0; i < SIZE; i++) {
 
 			System.out.print(((char) (i + 65)) + "| ");
 
-			for (int j = 0; j < board[i].length; j++) {
+			for (int j = 0; j < SIZE; j++) {
 
 				switch (board[j][i]) {
 					case 0:
@@ -345,8 +356,8 @@ public class Main {
 		int p1 = 0;
 		int p2 = 0;
 
-		for (int i = 0; i < 7; i++) {
-			for (int j = 0; j < 7; j++) {
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
 				int value = board[i][j];
 				if (value == 1) {
 					p1++;
@@ -356,7 +367,9 @@ public class Main {
 			}
 		}
 
-		return p1 >= 25 || p2 >= 25;
+		int win = (int) Math.ceil(SIZE * SIZE / 2);
+
+		return p1 >= win || p2 >= win;
 
 	}
 
