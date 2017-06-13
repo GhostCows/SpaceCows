@@ -30,7 +30,7 @@ public class Main {
 
 		int difficulty = 0;
 
-		if(gamemode.matches(".*[CA].*")) {
+		if (gamemode.matches(".*[CA].*")) {
 
 			System.out.println("What difficulty would you want? (0-2)");
 
@@ -39,6 +39,8 @@ public class Main {
 		}
 
 		do {
+
+			printBoard(board);
 
 			println("Placar:");
 			int[] points = points(board);
@@ -51,8 +53,6 @@ public class Main {
 				println("É a vez do adversário!");
 			}
 
-			printBoard(board);
-
 			int turn = yourTurn ? 0 : 1;
 
 			int[] move = new int[2];
@@ -61,9 +61,13 @@ public class Main {
 
 			if (gameTurn.equals('C') || gameTurn.equals('A')) {
 
-//				sleep(random.nextInt(2000) + 500);
+				println("Onde você vai jogar?");
+
+				sleep(random.nextInt(2000) + 500);
 
 				move = aiTurn(board, yourTurn, difficulty, prevs);
+
+				System.out.println(String.valueOf(move[0] + 1) + ((char) (65 + move[1])));
 
 			} else {
 
@@ -156,11 +160,11 @@ public class Main {
 
 		int[][][] analizedBoard = analizeBoard(board, yourTurn);
 
-		Integer maxLucroValue = Integer.MIN_VALUE;
-		ArrayList<Integer[]> maxLucroIds = new ArrayList<>();
+		Integer maxProfitValue = Integer.MIN_VALUE;
+		ArrayList<Integer[]> maxProfitIds = new ArrayList<>();
 
-		int maxVantagemValue = Integer.MIN_VALUE;
-		ArrayList<Integer[]> maxVantagemIds = new ArrayList<>();
+		int maxAdvantageValue = Integer.MIN_VALUE;
+		ArrayList<Integer[]> maxAdvantageIds = new ArrayList<>();
 
 		int maxBestValue = Integer.MIN_VALUE;
 		ArrayList<Integer[]> maxBestIds = new ArrayList<>();
@@ -185,19 +189,19 @@ public class Main {
 						int maxValue;
 
 						if (k == 0) {
-							maxIds = maxLucroIds;
-							maxValue = maxLucroValue;
+							maxIds = maxProfitIds;
+							maxValue = maxProfitValue;
 						} else {
-							maxIds = maxVantagemIds;
-							maxValue = maxVantagemValue;
+							maxIds = maxAdvantageIds;
+							maxValue = maxAdvantageValue;
 						}
 
 						if (value > maxValue) {
 
 							if (k == 0) {
-								maxLucroValue = value;
+								maxProfitValue = value;
 							} else {
-								maxVantagemValue = value;
+								maxAdvantageValue = value;
 							}
 
 							maxIds.clear();
@@ -210,7 +214,7 @@ public class Main {
 						}
 					}
 
-					int value = column[0] + column[1] / 3;
+					int value = column[0] + column[1] / (3 - difficulty);
 
 					if (value > maxBestValue) {
 
@@ -233,14 +237,39 @@ public class Main {
 		int win = (int) Math.ceil(SIZE * SIZE / 2);
 
 		if (difficulty > 0 &&
-				points[turn] + maxLucroValue >= win) {
+				points[turn] + maxProfitValue >= win) {
 
-			move = randomID(maxLucroIds);
+			move = randomID(maxProfitIds);
 
 		} else if (difficulty > 1 &&
-				points[1 - turn] + Math.ceil(SIZE / 3) >= win) {
+				points[1 - turn] + Math.ceil(SIZE / 3) - 1 >= win) {
 
-			move = randomID(maxVantagemIds);
+			maxProfitIds.clear();
+			maxProfitValue = Integer.MIN_VALUE;
+
+			for (Integer[] advantage : maxAdvantageIds) {
+
+				int x = advantage[0];
+				int y = advantage[1];
+
+				int profit = analizedBoard[x][y][0];
+
+				if(profit > maxProfitValue) {
+
+					maxProfitValue = profit;
+
+					maxProfitIds.clear();
+					maxProfitIds.add(advantage);
+
+				} else if(profit == maxProfitValue) {
+
+					maxProfitIds.add(advantage);
+
+				}
+
+			}
+
+			move = randomID(maxProfitIds);
 
 		} else {
 
@@ -273,8 +302,8 @@ public class Main {
 
 	/**
 	 * @return moves
-	 * 0 - lucro
-	 * 1 - vantagem
+	 * 0 - profit
+	 * 1 - advantage
 	 */
 
 	private static int[] analizeMove(int x, int y, int[][] board, boolean yourTurn) {
@@ -316,7 +345,7 @@ public class Main {
 
 		for (char aChar : chars) {
 			System.out.print(aChar);
-			sleep(50);
+			sleep(10);
 		}
 
 		System.out.print('\n');
