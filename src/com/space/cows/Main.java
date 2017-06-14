@@ -100,6 +100,13 @@ public class Main {
 
 		} while (!gameEnd(board));
 
+		printBoard(board);
+
+		println("Placar:");
+		int[] points = points(board);
+		println("# - " + points[0]);
+		println("@ - " + points[1]);
+
 		if (!yourTurn) {
 			println("Você Ganhou! Parabéns");
 		} else {
