@@ -36,6 +36,7 @@ public class Interface extends Game {
 	private int marginTopBottom = 31;
 	private int marginLeftRight = 226;
 	private int boardSize = length * slotSize;
+	private int win = (int) Math.ceil(length * length / 2);
 
 	/**
 	 * Variable that defines in what screen you are in.
@@ -49,7 +50,7 @@ public class Interface extends Game {
 
 	private int difficulty = 0;
 
-	private String gamemode = "PC";
+	private String gamemode = "PP";
 
 	private Color selected = new Color(78, 102, 249);
 	private Random random = new Random();
@@ -154,6 +155,12 @@ public class Interface extends Game {
 
 						desenharImagem(slot, x1, y1);
 
+						if(gameEnd()) {
+
+							desenharString((farmerTurn == 1 ? "Farmer" : "Alien") + " wins!", 5, 30, WHITE, 30);
+
+						}
+
 					}
 				}
 
@@ -188,11 +195,15 @@ public class Interface extends Game {
 
 				prevs[farmerTurn] = pos;
 
-				farmerTurn = 1 - farmerTurn;
+				if(!gameEnd()) {
 
-				if(gamemode.charAt(1 - farmerTurn) == 'C') {
+					farmerTurn = 1 - farmerTurn;
 
-					aiPlay();
+					if (gamemode.charAt(1 - farmerTurn) == 'C') {
+
+						aiPlay();
+
+					}
 
 				}
 
@@ -304,7 +315,6 @@ public class Interface extends Game {
 
 		int[] points = points();
 		int turn = farmerTurn;
-		int win = (int) Math.ceil(length * length / 2);
 
 		if (difficulty > 0 &&
 				points[turn] + maxProfitValue >= win) {
@@ -399,23 +409,6 @@ public class Interface extends Game {
 
 	}
 
-	private int[] points() {
-		int[] points = new int[2];
-
-		for (int[] line : board) {
-			for (int column : line) {
-
-				if (column != 0) {
-					points[column - 1]++;
-				}
-
-			}
-		}
-
-		return points;
-
-	}
-
 	private int[] randomID(ArrayList<Integer[]> arrayList) {
 
 		return toPrimitive(arrayList.get(random.nextInt(arrayList.size())));
@@ -478,7 +471,7 @@ public class Interface extends Game {
 				//</editor-fold>
 				//<editor-fold desc="Screen 2">
 				case 2:
-					if (gamemode.charAt(1 - farmerTurn) == 'P' && between(marginLeftRight, x, marginLeftRight + boardSize) && between(marginTopBottom, y, marginTopBottom + boardSize)) {
+					if (!gameEnd() && gamemode.charAt(1 - farmerTurn) == 'P' && between(marginLeftRight, x, marginLeftRight + boardSize) && between(marginTopBottom, y, marginTopBottom + boardSize)) {
 
 						int x1 = x - marginLeftRight;
 						int y1 = y - marginTopBottom;
@@ -495,6 +488,33 @@ public class Interface extends Game {
 
 		}
 	}
+
+	//<editor-fold desc="Essentials">
+	private int[] points() {
+		int[] points = new int[2];
+
+		for (int[] line : board) {
+			for (int column : line) {
+
+				if (column != 0) {
+					points[column - 1]++;
+				}
+
+			}
+		}
+
+		return points;
+
+	}
+
+	private boolean gameEnd() {
+
+		int[] points = points();
+
+		return points[0] >= win || points[1] >= win;
+
+	}
+	//</editor-fold>
 
 	//<editor-fold desc="Extra Functions">
 	private int min(int n, int m) {
