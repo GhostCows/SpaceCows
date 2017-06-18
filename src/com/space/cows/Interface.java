@@ -3,9 +3,13 @@ package com.space.cows;
 import br.senai.sc.engine.Game;
 
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
 
 import static java.awt.Color.*;
 
@@ -27,15 +31,18 @@ public class Interface extends Game {
 		super("TSIFOC", 1040, 650);
 		addMouseListener(new MouseInputHandler());
 		addMouseMotionListener(new MouseInputHandler());
+		addKeyListener(new KeyInputHandler());
 	}
 	//</editor-fold>
 
 	//<editor-fold desc="Variable Declarations">
-	private int length = 7;
-	private int slotSize = 84;
+	private int width = 1040;
+	private int height = 650;
+	private int length = 9;
 	private int marginTopBottom = 31;
-	private int marginLeftRight = 226;
-	private int boardSize = length * slotSize;
+	private int boardSize = height - 2 * marginTopBottom;
+	private int marginLeftRight = (width - boardSize) / 2;
+	private int slotSize = boardSize / length;
 	private int win = (int) Math.ceil(length * length / 2);
 
 	/**
@@ -46,11 +53,11 @@ public class Interface extends Game {
 	 * 2 Test Screen
 	 * 3 Settings Screen
 	 */
-	private int screen = 2;
+	private int screen = 0;
 
 	private int difficulty = 0;
 
-	private String gamemode = "PP";
+	private String gamemode = "PC";
 
 	private Color selected = new Color(78, 102, 249);
 	private Random random = new Random();
@@ -58,6 +65,17 @@ public class Interface extends Game {
 	private int[][] board = new int[length][length];
 	private int[][] prevs;
 	private int farmerTurn = 1;
+
+	private Point initialClick;
+	private boolean dragging = false;
+
+	private int isPopup = 0;
+
+	private String[][] popups;
+	private Runnable[][] popupsAction;
+
+	private int delayMin = 1; //default: 500ms  // must be greater than 0
+	private int delayMax = 2; //default: 2500ms // must be greater than 0
 
 	//<editor-fold desc="Screen 0">
 	private Image matrisse;
@@ -86,18 +104,37 @@ public class Interface extends Game {
 			slots[i] = carregarImagem("images/slot" + i + ".png");
 		}
 
+		container.setIconImage(carregarImagem("images/icon.jpg"));
+
 		prevs = new int[2][2];
 
 		prevs[0] = new int[]{-1, -1};
 		prevs[1] = new int[]{-1, -1};
 
-	}
+		adicionarAudio("track", "audios/track.mp3");
 
+		popups = new String[2][];
+		popupsAction = new Runnable[2][];
+
+		for (int i = 0; i < 2; i++) {
+
+			popups[i] = new String[i + 2];
+
+			popupsAction[i] = new Runnable[i + 1];
+
+		}
+
+	}
 
 	@Override
 	public void gameLoop() {
 
 		switch (screen) {
+			//<editor-fold desc="Screen -1">
+			case -1:
+				drawImageCenter(matrisse, 1040, 650, 160, 100);
+				break;
+			//</editor-fold>
 			//<editor-fold desc="Screen 0">
 			case 0: // tela inicial
 
@@ -153,19 +190,33 @@ public class Interface extends Game {
 						int x1 = marginLeftRight + slotSize * i;
 						int y1 = marginTopBottom + slotSize * j;
 
-						desenharImagem(slot, x1, y1);
-
-						if(gameEnd()) {
-
-							desenharString((farmerTurn == 1 ? "Farmer" : "Alien") + " wins!", 5, 30, WHITE, 30);
-
-						}
+						drawImageVertex(slot, x1, y1, slotSize, slotSize);
 
 					}
 				}
 
+				if (gameEnd()) {
+
+					desenharString((farmerTurn == 1 ? "Farmer" : "Alien") + " wins!", 5, 30, WHITE, 30);
+
+				}
+
 				break;
 			//</editor-fold>
+		}
+
+		if (isPopup != 0) {
+
+			String[] pops = popups[isPopup - 1];
+
+			switch (isPopup) {
+
+				case 1:
+					popup(pops[0], pops[1]);
+					break;
+
+			}
+
 		}
 
 	}
@@ -195,7 +246,7 @@ public class Interface extends Game {
 
 				prevs[farmerTurn] = pos;
 
-				if(!gameEnd()) {
+				if (!gameEnd()) {
 
 					farmerTurn = 1 - farmerTurn;
 
@@ -209,29 +260,35 @@ public class Interface extends Game {
 
 			} else {
 				// Alert player to play only on free slots
+				popup("Você só pode jogar em slots vazios", "Entendido", () -> isPopup = 0);
 			}
 		} else {
 			// Alert player not to play twice on the same place
+			popup("Você não pode jogar duas vezes\nno mesmo lugar", "Entendido", () -> isPopup = 0);
 		}
 	}
 
 	//<editor-fold desc="Artificial Intelligence">
 	private void aiPlay() {
 
-		int delay = random.nextInt(2000) + 500;
+		if (gamemode.charAt(1 - farmerTurn) == 'C') {
 
-		new Timer().schedule(
-				new TimerTask() {
-					@Override
-					public void run() {
+			int delay = random.nextInt(delayMax - delayMin) + delayMin;
 
-						int[] move = aiTurn();
+			new Timer().schedule(
+					new TimerTask() {
+						@Override
+						public void run() {
 
-						makeMove(move[0], move[1]);
+							int[] move = aiTurn();
 
-					}
-				}, delay
-		);
+							makeMove(move[0], move[1]);
+
+						}
+					}, delay
+			);
+
+		}
 
 	}
 
@@ -334,14 +391,14 @@ public class Interface extends Game {
 
 				int profit = analizedBoard[x][y][0];
 
-				if(profit > maxProfitValue) {
+				if (profit > maxProfitValue) {
 
 					maxProfitValue = profit;
 
 					maxProfitIds.clear();
 					maxProfitIds.add(advantage);
 
-				} else if(profit == maxProfitValue) {
+				} else if (profit == maxProfitValue) {
 
 					maxProfitIds.add(advantage);
 
@@ -420,13 +477,33 @@ public class Interface extends Game {
 	}
 
 	private boolean contains(int[] array) {
-		
+
 		return Arrays.equals(array, prevs[farmerTurn]);
-		
+
 	}
 	//</editor-fold>
 
 	private class MouseInputHandler extends MouseAdapter {
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+
+			initialClick = e.getPoint();
+			getComponentAt(initialClick);
+
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+
+			Point loc = container.getLocation();
+
+			int x = e.getX() - initialClick.x + loc.x;
+			int y = e.getY() - initialClick.y + loc.y;
+
+			container.setLocation(x, y);
+
+		}
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -438,54 +515,106 @@ public class Interface extends Game {
 			System.out.println("X " + x);
 			System.out.println("Y " + y);
 
-			switch (screen) {
-				//<editor-fold desc="Screen 0">
-				case 0:
+			if (isPopup != 0) {
 
-					if (between(415, x, 605) && between(490, y, 530)) {
-						screen = 1;
-					}
+				popupsAction[isPopup - 1][0].run();
 
-					break;
-				//</editor-fold>
-				//<editor-fold desc="Screen 1">
-				case 1:
-					if (between(450, x, 590)) {
+			} else {
 
-						if (between(110, y, 180)) { // change gamemode
+				switch (screen) {
+					//<editor-fold desc="Screen 0">
+					case 0:
 
-							int i = x < 520 ? 0 : 1;
-							int j = 1 - i;
-							char[] gm = new char[2];
-							gm[i] = ((char) (147 - gamemode.charAt(i)));
-							gm[j] = gamemode.charAt(j);
-							gamemode = new String(gm);
+						if (between(415, x, 605) && between(490, y, 530)) {
+							screen = 1;
 
-						} else if (between(200, y, 320)) { // change difficulty
+							tocarAudio("track");
+						} else {
 
-							difficulty = (int) Math.floor(y / 40 - 5);
+							popup("Cuidado. Vacas Mordem", "Estou ciente", () -> isPopup = 0);
 
 						}
-					}
-					break;
-				//</editor-fold>
-				//<editor-fold desc="Screen 2">
-				case 2:
-					if (!gameEnd() && gamemode.charAt(1 - farmerTurn) == 'P' && between(marginLeftRight, x, marginLeftRight + boardSize) && between(marginTopBottom, y, marginTopBottom + boardSize)) {
 
-						int x1 = x - marginLeftRight;
-						int y1 = y - marginTopBottom;
+						break;
+					//</editor-fold>
+					//<editor-fold desc="Screen 1">
+					case 1:
+						if (between(450, x, 590)) {
 
-						int x2 = (int) Math.floor((double) x1 / slotSize);
-						int y2 = (int) Math.floor(y1 / slotSize);
+							if (between(110, y, 180)) { // change gamemode
 
-						makeMove(x2, y2);
+								int i = x < 520 ? 0 : 1;
+								int j = 1 - i;
+								char[] gm = new char[2];
+								gm[i] = ((char) (147 - gamemode.charAt(i)));
+								gm[j] = gamemode.charAt(j);
+								gamemode = new String(gm);
 
-					}
-					break;
-				//</editor-fold>
+							} else if (between(200, y, 320)) { // change difficulty
+
+								difficulty = (int) Math.floor(y / 40 - 5);
+
+							} else {
+								screen = 2;
+								aiPlay();
+							}
+
+						} else {
+							screen = 2;
+							aiPlay();
+						}
+						break;
+					//</editor-fold>
+					//<editor-fold desc="Screen 2">
+					case 2:
+						if (!gameEnd() && gamemode.charAt(1 - farmerTurn) == 'P' && between(marginLeftRight, x, marginLeftRight + boardSize) && between(marginTopBottom, y, marginTopBottom + boardSize)) {
+
+							int x1 = x - marginLeftRight;
+							int y1 = y - marginTopBottom;
+
+							int x2 = (int) Math.floor((double) x1 / slotSize);
+							int y2 = (int) Math.floor(y1 / slotSize);
+
+							makeMove(x2, y2);
+
+						}
+						break;
+					//</editor-fold>
+				}
 			}
 
+		}
+	}
+
+	private class KeyInputHandler extends KeyAdapter {
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			int code = e.getKeyCode();
+
+			System.out.println(code);
+
+			if(isPopup != 0) {
+
+				Runnable[] rs = popupsAction[isPopup - 1];
+
+				rs[rs.length - 1].run();
+
+			} else {
+
+				switch (code) {
+					case KeyEvent.VK_ESCAPE:
+						if (screen <= 0) {
+							System.exit(0);
+						} else {
+							screen = 0;
+							pararAudio("track");
+							board = new int[length][length];
+						}
+						break;
+				}
+
+			}
 		}
 	}
 
@@ -514,6 +643,34 @@ public class Interface extends Game {
 		return points[0] >= win || points[1] >= win;
 
 	}
+
+	private void popup(String msg, String ok) {
+
+		popupBox();
+
+		desenharString(msg, width / 2 - 120, height / 2 - 30, WHITE, 20);
+		desenharString(ok, width / 2 - 120, height / 2 + 45, WHITE, 15);
+
+	}
+
+	private void popup(String msg, String ok, Runnable confirm) {
+
+		isPopup = 1;
+		popups[0][0] = msg;
+
+		System.out.println(popups[0][0]);
+		popups[0][1] = ok;
+		popupsAction[0][0] = confirm;
+
+	}
+
+	private void popupBox() {
+
+		drawRectVertex(0, 0, width, height * 2, new Color(0, 0, 0, 200));
+
+		drawRectCenter(width / 2, height / 2, 250, 100, new Color(81, 86, 88));
+
+	}
 	//</editor-fold>
 
 	//<editor-fold desc="Extra Functions">
@@ -528,6 +685,48 @@ public class Interface extends Game {
 	private void drawBG() {
 
 		desenharRetangulo(0, 0, 1040, 650, new Color(18, 18, 18));
+
+	}
+
+	private void drawImageCenter(Image img, int x, int y, int width, int height) {
+
+		Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+		desenharImagem(scaled, x - width / 2, y - height / 2);
+
+	}
+
+	private void drawImageCenter(Image img, int x, int y) {
+
+		BufferedImage bimg = (BufferedImage) img;
+
+		desenharImagem(img, x - bimg.getWidth() / 2, y - bimg.getHeight() / 2);
+
+	}
+
+	private void drawImageVertex(Image img, int x, int y, int width, int height) {
+
+		Image scaled = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+		desenharImagem(scaled, x, y);
+
+	}
+
+	private void drawImageVertex(Image img, int x, int y) {
+
+		desenharImagem(img, x, y);
+
+	}
+
+	private void drawRectCenter(int x, int y, int width, int height, Color c) {
+
+		desenharRetangulo(x - width / 2, y - height / 2, width, height, c);
+
+	}
+
+	private void drawRectVertex(int x, int y, int width, int height, Color c) {
+
+		desenharRetangulo(x, y, height, width, c);
 
 	}
 

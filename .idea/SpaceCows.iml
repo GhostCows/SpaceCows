@@ -14,7 +14,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/engine_0-0-14.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/jl1.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
