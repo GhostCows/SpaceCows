@@ -26,7 +26,11 @@ public class Utils {
 	public Image loadImage(String fileName) {
 		URL imgUrl = this.getClass().getClassLoader().getResource(fileName);
 		if(imgUrl == null) {
-			System.out.println("Erro ao carregar a imagem!");
+			try {
+				throw new Exception("Erro ao carregar a imagem!");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} else {
 			try {
 				String[] split = fileName.split("\\.");

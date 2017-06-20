@@ -9,7 +9,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.*;
-import java.util.List;
 
 import static java.awt.Color.*;
 
@@ -28,7 +27,7 @@ public class Interface extends Game {
 	}
 
 	public Interface() {
-		super("TSIFOC", 1040, 650);
+		super("TSIFOC", 1156, 650);
 		addMouseListener(new MouseInputHandler());
 		addMouseMotionListener(new MouseInputHandler());
 		addKeyListener(new KeyInputHandler());
@@ -36,13 +35,13 @@ public class Interface extends Game {
 	//</editor-fold>
 
 	//<editor-fold desc="Variable Declarations">
-	private int width = 1040;
-	private int height = 650;
-	private int length = 9;
-	private int marginTopBottom = 31;
-	private int boardSize = height - 2 * marginTopBottom;
-	private int marginLeftRight = (width - boardSize) / 2;
-	private int slotSize = boardSize / length;
+	private int width; // 1156
+	private int height; // 650
+	private int length; // 7
+	private int marginTop;
+	//	private int marginBottom;
+	private int marginLeft;
+	private int slotSize;
 	private int win = (int) Math.ceil(length * length / 2);
 
 	/**
@@ -57,54 +56,95 @@ public class Interface extends Game {
 
 	private int difficulty = 0;
 
-	private String gamemode = "PC";
+	private String gamemode;
+	private String gamemode2;
 
-	private Color selected = new Color(78, 102, 249);
+	private double ratio;
+
 	private Random random = new Random();
 
-	private int[][] board = new int[length][length];
+	private int[][] board;
 	private int[][] prevs;
-	private int farmerTurn = 1;
+	private int farmerTurn;
+
+	private int indexEE = 0;
+	private int eeNum = 5;
 
 	private Point initialClick;
 	private boolean dragging = false;
 
 	private int isPopup = 0;
 
-	private String[][] popups;
-	private Runnable[][] popupsAction;
+	private String[] popups;
+	private Runnable[] popupsAction;
 
-	private int delayMin = 1; //default: 500ms  // must be greater than 0
-	private int delayMax = 2; //default: 2500ms // must be greater than 0
+	private Font popupFont;
+	private int popupFontSize;
+
+	private int delayMin = 500; //default: 500ms  // must be greater than 0
+	private int delayMax = 2500; //default: 2500ms // must be greater than 0
+
+	private Image logoBig;
+	private Image backGround;
+	private Image popup;
 
 	//<editor-fold desc="Screen 0">
-	private Image matrisse;
+	private Image btnSingle;
+	private Image btnPersonalizar;
+	private Image btnConfig;
+	private Image btnDual;
+	private Image btnSair;
 	//</editor-fold>
 
 	//<editor-fold desc="Screen 1">
-	private Image computer;
-	private Image person;
+	private Image btnFacil;
+	private Image btnMedio;
+	private Image btnDificil;
+	private Image btnVoltar;
 	//</editor-fold>
 
 	//<editor-fold desc="Screen 2">
+	private Image[] vacas;
 	private Image[] slots;
+	private Image logoSmall;
+	private Image btnConfigSmall;
+	private Image[] placares;
+	private Image btnDesistir;
 	//</editor-fold>
 	//</editor-fold>
 
 	@Override
 	public void init() {
 
-		matrisse = carregarImagem("images/Matrisse.png");
+		vacas = new Image[2];
+		vacas[0] = carregarImagem("images/vaca-terra.png");
+		vacas[1] = carregarImagem("images/vaca-alien-no_bright.png");
 
-		computer = carregarImagem("images/computer.png");
-		person = carregarImagem("images/person.png");
+		placares = new Image[2];
+		placares[0] = carregarImagem("images/placar-terra.png");
+		placares[1] = carregarImagem("images/placar-alien.png");
 
-		slots = new Image[3];
-		for (int i = 0; i < slots.length; i++) {
-			slots[i] = carregarImagem("images/slot" + i + ".png");
-		}
+		slots = new Image[2];
+		slots[0] = carregarImagem("images/casa-clara.png");
+		slots[1] = carregarImagem("images/casa-escura.png");
 
-		container.setIconImage(carregarImagem("images/icon.jpg"));
+		popup = carregarImagem("images/popup.png");
+		logoBig = carregarImagem("images/logo-big.png");
+		logoSmall = carregarImagem("images/logo-small.png");
+		backGround = carregarImagem("images/bg.png");
+		btnSingle = carregarImagem("images/btn-single.png");
+		btnPersonalizar = carregarImagem("images/btn-perso.png");
+		btnConfig = carregarImagem("images/btn-config.png");
+		btnDual = carregarImagem("images/btn-dual.png");
+		btnSair = carregarImagem("images/btn-sair.png");
+		btnFacil = carregarImagem("images/btn-facil.png");
+		btnMedio = carregarImagem("images/btn-medio.png");
+		btnDificil = carregarImagem("images/btn-dificil.png");
+		btnVoltar = carregarImagem("images/btn-voltar.png");
+		btnConfigSmall = carregarImagem("images/btn-config-small.png");
+		btnDesistir = carregarImagem("images/btn-desistir.png");
+
+//		container.setIconImage(carregarImagem("images/icon.jpg"));
 
 		prevs = new int[2][2];
 
@@ -113,92 +153,123 @@ public class Interface extends Game {
 
 		adicionarAudio("track", "audios/track.mp3");
 
-		popups = new String[2][];
-		popupsAction = new Runnable[2][];
+		popups = new String[2];
+		popupsAction = new Runnable[2];
 
 		for (int i = 0; i < 2; i++) {
 
-			popups[i] = new String[i + 2];
-
-			popupsAction[i] = new Runnable[i + 1];
+			popups[i] = "";
 
 		}
+
+		width = 1156; // 1156
+		height = 650; // 650
+
+		ratio = ((double) height) / 1080;
+
+		length = 7;
+
+		board = new int[length][length];
+
+		farmerTurn = 1;
+
+		marginTop = 155;
+
+//		marginBottom = 15;
+		marginLeft = 505;
+
+		slotSize = 130;
+
+		popupFontSize = 26;
+		addNewFont("popup", "fonts/popup.ttf", popupFontSize, 0);
+
+		popupFont = getFont("popup");
 
 	}
 
 	@Override
 	public void gameLoop() {
 
+		drawImageVertex(getScaledBg(), 0, 0);
+
 		switch (screen) {
 			//<editor-fold desc="Screen -1">
 			case -1:
-				drawImageCenter(matrisse, 1040, 650, 160, 100);
 				break;
 			//</editor-fold>
 			//<editor-fold desc="Screen 0">
 			case 0: // tela inicial
 
-				desenharImagem(matrisse, 0, 0);
+				drawImageVertex(logoBig, r(715), r(25), r(489), r(282));
 
-				desenharRetangulo(415, 490, 190, 40, WHITE);
+				drawImageVertex(btnSingle, r(260), r(390), r(460), r(460));
 
-				desenharString("COMEÇAR", 430, 520, BLACK, 30);
+				drawImageVertex(btnPersonalizar, r(730), r(390), r(460), r(225));
+
+				drawImageVertex(btnConfig, r(730), r(625), r(460), r(225));
+
+				drawImageVertex(btnDual, r(1200), r(390), r(460), r(460));
+
+				drawImageVertex(btnSair, r(1430), r(875), r(230), r(113));
 
 				break;
 			//</editor-fold>
 			//<editor-fold desc="Screen 1">
 			case 1: // configurações
 
-				drawBG();
+				drawImageVertex(logoBig, r(715), r(25), r(489), r(282));
 
-				desenharString("Opções:", 463, 60, WHITE, 30);
-				desenharRetangulo(450, 110, 70, 70, new Color(200, 200, 200));
-				desenharRetangulo(520, 110, 70, 70, WHITE);
+				drawImageVertex(btnFacil, r(260), r(390), r(460), r(460));
 
-				if (gamemode.charAt(0) == 'P') {
-					desenharImagem(person, 450, 110);
-				} else {
-					desenharImagem(computer, 450, 110);
-				}
-				if (gamemode.charAt(1) == 'P') {
-					desenharImagem(person, 520, 110);
-				} else {
-					desenharImagem(computer, 520, 110);
-				}
+				drawImageVertex(btnMedio, r(730), r(390), r(460), r(460));
 
-				desenharRetangulo(450, 200, 140, 40, WHITE);
-				desenharString("FÁCIL", 480, 232, difficulty == 0 ? selected : Color.BLACK);
-				desenharRetangulo(450, 240, 140, 40, new Color(200, 200, 200));
-				desenharString("NORMAL", 455, 272, difficulty == 1 ? selected : Color.BLACK);
-				desenharRetangulo(450, 280, 140, 40, WHITE);
-				desenharString("DIFÍCIL", 470, 312, difficulty == 2 ? selected : Color.BLACK);
+				drawImageVertex(btnDificil, r(1200), r(390), r(460), r(460));
+
+				drawImageVertex(btnVoltar, r(260), r(875), r(230), r(113));
 
 				break;
 			//</editor-fold>
 			//<editor-fold desc="Screen 2">
 			case 2:
 
-				drawBG();
+				drawImageVertex(logoSmall, r(845), r(14), r(228), r(132));
+
+				drawImageVertex(btnConfigSmall, r(764), r(80), r(57), r(58));
+
+				drawImageVertex(placares[0], r(220), r(435), r(258), r(172));
+				drawImageVertex(placares[1], r(1440), r(435), r(260), r(173));
+
+				drawImageVertex(btnDesistir, r(285), r(610), r(161), r(34));
+				drawImageVertex(btnDesistir, r(1475), r(610), r(161), r(34));
+
+				int[] points = points();
+
+
+
 
 				for (int i = 0; i < length; i++) {
 					for (int j = 0; j < length; j++) {
 
+						Image slot = slots[(i + j) % 2];
+
+						int size = r(slotSize);
+
+						int x = r(marginLeft) + size * i;
+						int y = r(marginTop) + size * j;
+
+						drawImageVertex(slot, x, y, size, size);
+
 						int num = board[i][j];
 
-						Image slot = slots[num];
+						if (num != 0) {
 
-						int x1 = marginLeftRight + slotSize * i;
-						int y1 = marginTopBottom + slotSize * j;
+							Image cow = vacas[num - 1];
 
-						drawImageVertex(slot, x1, y1, slotSize, slotSize);
+							drawImageCenter(cow, x + size / 2, y + size / 2, r(129), r(104));
+
+						}
 
 					}
-				}
-
-				if (gameEnd()) {
-
-					desenharString((farmerTurn == 1 ? "Farmer" : "Alien") + " wins!", 5, 30, WHITE, 30);
-
 				}
 
 				break;
@@ -207,12 +278,12 @@ public class Interface extends Game {
 
 		if (isPopup != 0) {
 
-			String[] pops = popups[isPopup - 1];
+			String pops = popups[isPopup - 1];
 
 			switch (isPopup) {
 
 				case 1:
-					popup(pops[0], pops[1]);
+					popup(pops);
 					break;
 
 			}
@@ -259,13 +330,23 @@ public class Interface extends Game {
 				}
 
 			} else {
-				// Alert player to play only on free slots
-				popup("Você só pode jogar em slots vazios", "Entendido", () -> isPopup = 0);
+				// Alert player to play only on free vacas
+				popup("Você só pode jogar em vacas vazios", () -> {});
 			}
 		} else {
 			// Alert player not to play twice on the same place
-			popup("Você não pode jogar duas vezes\nno mesmo lugar", "Entendido", () -> isPopup = 0);
+			popup("Você não pode jogar duas vezes\nno mesmo lugar", () -> {});
 		}
+	}
+
+	private void makeMove() {
+
+		if(gamemode.charAt(0) == 'C') {
+
+			aiPlay();
+
+		}
+
 	}
 
 	//<editor-fold desc="Artificial Intelligence">
@@ -483,6 +564,7 @@ public class Interface extends Game {
 	}
 	//</editor-fold>
 
+	//<editor-fold desc="Input">
 	private class MouseInputHandler extends MouseAdapter {
 
 		@Override
@@ -517,7 +599,8 @@ public class Interface extends Game {
 
 			if (isPopup != 0) {
 
-				popupsAction[isPopup - 1][0].run();
+				popupsAction[isPopup - 1].run();
+				isPopup = 0;
 
 			} else {
 
@@ -525,13 +608,41 @@ public class Interface extends Game {
 					//<editor-fold desc="Screen 0">
 					case 0:
 
-						if (between(415, x, 605) && between(490, y, 530)) {
+						if (in(x, y, 260, 390, 460)) {
+
 							screen = 1;
+							gamemode = "PC";
+							gamemode2 = "CC";
 
-							tocarAudio("track");
-						} else {
+							indexEE = 0;
 
-							popup("Cuidado. Vacas Mordem", "Estou ciente", () -> isPopup = 0);
+						} else if(in(x, y, 730, 390, 460, 255)) {
+
+							//perso
+
+						} else if(in(x, y, 730, 625, 460, 255)) {
+
+							//config
+
+						} else if(in(x, y, 1200, 390, 460)) {
+
+							screen = 1;
+							gamemode = "PP";
+							gamemode2 = "CC";
+
+							indexEE = 0;
+
+						} else if(in(x, y, 1430, 875, 230, 113)) {
+
+							System.exit(0);
+
+						} else if(in(x, y, 715, 25, 489, 282)) {
+
+							if(indexEE++ == eeNum - 1) {
+
+								popup("Cuidado, Vacas Mordem", () -> indexEE = 0);
+
+							}
 
 						}
 
@@ -539,45 +650,65 @@ public class Interface extends Game {
 					//</editor-fold>
 					//<editor-fold desc="Screen 1">
 					case 1:
-						if (between(450, x, 590)) {
 
-							if (between(110, y, 180)) { // change gamemode
+						if(in(x, y, 260, 390, 460)) {
 
-								int i = x < 520 ? 0 : 1;
-								int j = 1 - i;
-								char[] gm = new char[2];
-								gm[i] = ((char) (147 - gamemode.charAt(i)));
-								gm[j] = gamemode.charAt(j);
-								gamemode = new String(gm);
+							difficulty = 0;
+							screen = 2;
 
-							} else if (between(200, y, 320)) { // change difficulty
+							makeMove();
 
-								difficulty = (int) Math.floor(y / 40 - 5);
+						} else if(in(x, y, 730, 390, 460)) {
 
-							} else {
-								screen = 2;
-								aiPlay();
+							difficulty = 1;
+							screen = 2;
+
+							makeMove();
+
+						} else if(in(x, y, 1200, 390, 460)) {
+
+							difficulty = 2;
+							screen = 2;
+
+							makeMove();
+
+						} else if (in(x, y, 715, 25, 489, 282)) {
+
+							indexEE = (indexEE + 1) % 5;
+
+							if(indexEE == eeNum) {
+								String tmp = gamemode;
+								gamemode = gamemode2;
+								gamemode2 = tmp;
 							}
 
-						} else {
-							screen = 2;
-							aiPlay();
+						} else if (in(x, y, 260, 875, 230, 113)) {
+
+							screen = 0;
+
+							indexEE = 0;
+
 						}
+
 						break;
 					//</editor-fold>
 					//<editor-fold desc="Screen 2">
 					case 2:
-						if (!gameEnd() && gamemode.charAt(1 - farmerTurn) == 'P' && between(marginLeftRight, x, marginLeftRight + boardSize) && between(marginTopBottom, y, marginTopBottom + boardSize)) {
 
-							int x1 = x - marginLeftRight;
-							int y1 = y - marginTopBottom;
+						int boardSize = 7 * slotSize;
 
-							int x2 = (int) Math.floor((double) x1 / slotSize);
-							int y2 = (int) Math.floor(y1 / slotSize);
+						if(in(x, y, marginLeft, marginTop, boardSize)) {
 
-							makeMove(x2, y2);
+							int posX = x - r(marginLeft);
+							int posY = y - r(marginTop);
+
+							int sX = (int) Math.floor(posX / r(slotSize));
+							int sY = (int) Math.floor(posY / r(slotSize));
+
+							makeMove(sX, sY);
 
 						}
+
 						break;
 					//</editor-fold>
 				}
@@ -594,11 +725,11 @@ public class Interface extends Game {
 
 			System.out.println(code);
 
-			if(isPopup != 0) {
+			if (isPopup != 0) {
 
-				Runnable[] rs = popupsAction[isPopup - 1];
+				popupsAction[isPopup - 1].run();
+				isPopup = 0;
 
-				rs[rs.length - 1].run();
 
 			} else {
 
@@ -608,8 +739,9 @@ public class Interface extends Game {
 							System.exit(0);
 						} else {
 							screen = 0;
-							pararAudio("track");
 							board = new int[length][length];
+
+
 						}
 						break;
 				}
@@ -617,8 +749,13 @@ public class Interface extends Game {
 			}
 		}
 	}
+	//</editor-fold>
 
 	//<editor-fold desc="Essentials">
+	private int r(int i) {
+		return (int) Math.floor(((double) i) * ratio - .3);
+	}
+
 	private int[] points() {
 		int[] points = new int[2];
 
@@ -644,31 +781,32 @@ public class Interface extends Game {
 
 	}
 
-	private void popup(String msg, String ok) {
+	private void popup(String msg, Runnable confirm) {
 
-		popupBox();
+		isPopup = 1;
+		popups[0] = msg;
 
-		desenharString(msg, width / 2 - 120, height / 2 - 30, WHITE, 20);
-		desenharString(ok, width / 2 - 120, height / 2 + 45, WHITE, 15);
+		popupsAction[0] = confirm;
 
 	}
 
-	private void popup(String msg, String ok, Runnable confirm) {
+	private void popup(String msg) {
 
-		isPopup = 1;
-		popups[0][0] = msg;
+		popupBox();
 
-		System.out.println(popups[0][0]);
-		popups[0][1] = ok;
-		popupsAction[0][0] = confirm;
+		int x = (width / 2) - r(596 / 2) + r(64);
+
+		int y = (height / 2) - r(333 / 2) + r(107);
+
+		desenharString(msg, x, y, BLACK, popupFont);
 
 	}
 
 	private void popupBox() {
 
-		drawRectVertex(0, 0, width, height * 2, new Color(0, 0, 0, 200));
+		drawRectVertex(0, 0, width, height * 2, new Color(0, 0, 0, 150));
 
-		drawRectCenter(width / 2, height / 2, 250, 100, new Color(81, 86, 88));
+		drawImageCenter(popup, width / 2, height / 2, r(596), r(333));
 
 	}
 	//</editor-fold>
@@ -730,8 +868,41 @@ public class Interface extends Game {
 
 	}
 
+	private void drawCenteredString(String text, int x, int y, int width, int height, Font font) {
+		Graphics2D g = getGraphics2D();
+		FontMetrics metrics = g.getFontMetrics(font);
+		int x1 = x + (width - metrics.stringWidth(text)) / 2;
+		int y1 = y + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
+		g.setFont(font);
+		g.drawString(text, x1, y1);
+	}
+
+	private Image getScaledBg() {
+
+		Image scaled = backGround.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		return cropImage(scaled, 0, 0, width, height);
+
+	}
+
+	private Image cropImage(Image img, int x, int y, int width, int height) {
+
+		BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		bimg.getGraphics().drawImage(img, 0, 0, width, height, x, y, x + width, y + height, null);
+
+		return bimg.getScaledInstance(width, height, 0);
+
+	}
+
 	private boolean between(int min, int num, int max) {
-		return min < num && num < max;
+		return r(min) < num && num < r(max);
+	}
+
+	private boolean in(int x, int y, int xmin, int ymin, int width, int height) {
+		return between(xmin, x, xmin + width) && between(ymin, y, ymin + height);
+	}
+
+	private boolean in(int x, int y, int xmin, int ymin, int size) {
+		return between(xmin, x, xmin + size) && between(ymin, y, ymin + size);
 	}
 	//</editor-fold>
 

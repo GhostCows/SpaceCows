@@ -1,14 +1,6 @@
 package br.senai.sc.engine;
 
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.LayoutManager;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -94,6 +86,7 @@ public abstract class Game extends Canvas {
 		while(this.gameRunning) {
 			this.graphics2D = (Graphics2D)this.strategy.getDrawGraphics();
 			this.fps.updateFPS();
+			this.graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 			this.graphics2D.setColor(Color.white);
 			this.graphics2D.fillRect(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
 			this.gameLoop();
@@ -118,30 +111,35 @@ public abstract class Game extends Canvas {
 	}
 
 	public void desenharString(String mensagem, int x, int y) {
-		this.graphics2D.drawString(mensagem, x, y);
+		FontMetrics fm = graphics2D.getFontMetrics();
+		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
 	}
 
 	public void desenharString(String mensagem, int x, int y, Color color) {
 		this.graphics2D.setColor(color);
-		this.graphics2D.drawString(mensagem, x, y);
+		FontMetrics fm = graphics2D.getFontMetrics();
+		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
 	}
 
 	public void desenharString(String mensagem, int x, int y, Color color, int fontSize) {
 		this.graphics2D.setColor(color);
 		this.graphics2D.setFont(new Font("Arial", 1, fontSize));
-		this.graphics2D.drawString(mensagem, x, y);
+		FontMetrics fm = graphics2D.getFontMetrics();
+		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
 	}
 
-	public void desenharString(String mensagem, int x, int y, Color color, int fontSize, String fontName) {
+	public void desenharString(String mensagem, int x, int y, Color color, Font font) {
 		this.graphics2D.setColor(color);
-		this.graphics2D.setFont(new Font(fontName, 1, fontSize));
-		this.graphics2D.drawString(mensagem, x, y);
+		this.graphics2D.setFont(font);
+		FontMetrics fm = graphics2D.getFontMetrics();
+		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
 	}
 
-	public void desenharString(String mensagem, int x, int y, Color color, int fontSize, String fontName, int fontStyle) {
+	public void desenharString(String mensagem, int x, int y, Color color, int fontSize, Font font, int fontStyle) {
 		this.graphics2D.setColor(color);
-		this.graphics2D.setFont(new Font(fontName, fontStyle, fontSize));
-		this.graphics2D.drawString(mensagem, x, y);
+		this.graphics2D.setFont(font);
+		FontMetrics fm = graphics2D.getFontMetrics();
+		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
 	}
 
 	public Image carregarImagem(String path) {
@@ -224,5 +222,11 @@ public abstract class Game extends Canvas {
 
 	public int getHeight() {
 		return Utils.getInstance().getHeight();
+	}
+
+	public Font getFont(String fontName) {
+
+		return customFonts.get(fontName).getCustomFont();
+
 	}
 }
