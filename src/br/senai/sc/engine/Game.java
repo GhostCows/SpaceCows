@@ -13,8 +13,8 @@ import javax.swing.JPanel;
 public abstract class Game extends Canvas {
 	private static final long serialVersionUID = 6058040659371962305L;
 	protected JFrame container;
-	private BufferStrategy strategy;
-	private boolean gameRunning = true;
+	protected BufferStrategy strategy;
+	protected boolean gameRunning = true;
 	private boolean sairAoTermino = false;
 	private Graphics2D graphics2D;
 	private Fps fps;
@@ -29,7 +29,7 @@ public abstract class Game extends Canvas {
 		this.container.setUndecorated(true);
 		JPanel panel = (JPanel)this.container.getContentPane();
 		panel.setPreferredSize(new Dimension(Utils.getInstance().getWidth(), Utils.getInstance().getHeight()));
-		panel.setLayout((LayoutManager)null);
+		panel.setLayout(null);
 		this.setBounds(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
 		panel.add(this);
 		this.setIgnoreRepaint(true);
@@ -57,8 +57,8 @@ public abstract class Game extends Canvas {
 		this.container = new JFrame(Utils.getInstance().getNomeJogo());
 		this.container.setUndecorated(true);
 		JPanel panel = (JPanel) this.container.getContentPane();
-		panel.setPreferredSize(new Dimension(Utils.getInstance().getWidth() - 10, Utils.getInstance().getHeight() - 10));
-		panel.setLayout((LayoutManager)null);
+		panel.setPreferredSize(new Dimension(Utils.getInstance().getWidth(), Utils.getInstance().getHeight()));
+		panel.setLayout(null);
 		this.setBounds(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
 		panel.add(this);
 		this.setIgnoreRepaint(true);
@@ -73,7 +73,7 @@ public abstract class Game extends Canvas {
 		this.musicas = new HashMap();
 		this.customFonts = new HashMap();
 		this.init();
-		this.container.setLocationRelativeTo((Component)null);
+		this.container.setLocationRelativeTo(null);
 		this.container.setVisible(true);
 		this.requestFocus();
 		this.createBufferStrategy(2);

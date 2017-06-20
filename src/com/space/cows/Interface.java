@@ -1,14 +1,15 @@
 package com.space.cows;
 
+import br.senai.sc.engine.Fps;
 import br.senai.sc.engine.Game;
+import br.senai.sc.engine.Utils;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.Timer;
 
 import static java.awt.Color.*;
 
@@ -53,11 +54,9 @@ public class Interface extends Game {
 	 * 3 Settings Screen
 	 */
 	private int screen = 0;
-
 	private int difficulty = 0;
 
 	private String gamemode;
-	private String gamemode2;
 
 	private double ratio;
 
@@ -72,6 +71,7 @@ public class Interface extends Game {
 
 	private Point initialClick;
 	private boolean dragging = false;
+	private boolean fullscreen = false;
 
 	private int isPopup = 0;
 
@@ -570,20 +570,39 @@ public class Interface extends Game {
 		@Override
 		public void mousePressed(MouseEvent e) {
 
-			initialClick = e.getPoint();
-			getComponentAt(initialClick);
+			int x = e.getX();
+			int y = e.getY();
+
+			switch (screen) {
+				case 0:
+				case 1:
+					dragging = in(x, y,715, 25, 489, 282);
+					break;
+				case 2:
+					dragging = in(x, y,845, 14, 228, 132);
+					break;
+			}
+
+			if(dragging && !fullscreen) {
+				initialClick = e.getPoint();
+				getComponentAt(initialClick);
+			}
 
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
 
-			Point loc = container.getLocation();
+			if(dragging && !fullscreen) {
 
-			int x = e.getX() - initialClick.x + loc.x;
-			int y = e.getY() - initialClick.y + loc.y;
+				Point loc = container.getLocation();
 
-			container.setLocation(x, y);
+				int x = e.getX() - initialClick.x + loc.x;
+				int y = e.getY() - initialClick.y + loc.y;
+
+				container.setLocation(x, y);
+
+			}
 
 		}
 
@@ -612,7 +631,6 @@ public class Interface extends Game {
 
 							screen = 1;
 							gamemode = "PC";
-							gamemode2 = "CC";
 
 							indexEE = 0;
 
@@ -628,7 +646,6 @@ public class Interface extends Game {
 
 							screen = 1;
 							gamemode = "PP";
-							gamemode2 = "CC";
 
 							indexEE = 0;
 
@@ -674,12 +691,10 @@ public class Interface extends Game {
 
 						} else if (in(x, y, 715, 25, 489, 282)) {
 
-							indexEE = (indexEE + 1) % 5;
+							indexEE++;
 
 							if(indexEE == eeNum) {
-								String tmp = gamemode;
-								gamemode = gamemode2;
-								gamemode2 = tmp;
+								gamemode = "CC";
 							}
 
 						} else if (in(x, y, 260, 875, 230, 113)) {
@@ -735,6 +750,9 @@ public class Interface extends Game {
 
 				switch (code) {
 					case KeyEvent.VK_ESCAPE:
+						gamemode = "PC";
+						indexEE = 0;
+
 						if (screen <= 0) {
 							System.exit(0);
 						} else {
@@ -744,12 +762,65 @@ public class Interface extends Game {
 
 						}
 						break;
+					case KeyEvent.VK_F11:
+						fullscreen();
+						break;
 				}
 
 			}
 		}
 	}
 	//</editor-fold>
+
+	private void fullscreen() {
+
+		fullscreen = !fullscreen;
+
+		Dimension fullscreen;
+
+		if(this.fullscreen) {
+
+			fullscreen = Toolkit.getDefaultToolkit().getScreenSize();
+
+		} else {
+
+			fullscreen = new Dimension(1156, 650);
+
+		}
+
+		width = (int) fullscreen.getWidth();
+		height = (int) fullscreen.getHeight();
+
+		ratio = ((double) height) / 1080;
+
+		container.dispose();
+
+		Utils.getInstance().setWidth(width);
+		Utils.getInstance().setHeight(height);
+
+		container = new JFrame(Utils.getInstance().getNomeJogo());
+		container.setUndecorated(true);
+		JPanel panel = (JPanel)this.container.getContentPane();
+		panel.setPreferredSize(fullscreen);
+		panel.setLayout(null);
+		setBounds(0, 0, width, height);
+		panel.add(this);
+		setIgnoreRepaint(true);
+		container.pack();
+		container.setResizable(false);
+		container.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				System.exit(0);
+			}
+		});
+		container.setVisible(true);
+		requestFocus();
+
+		if(!this.fullscreen) {
+			container.setLocationRelativeTo(null);
+		}
+
+	}
 
 	//<editor-fold desc="Essentials">
 	private int r(int i) {

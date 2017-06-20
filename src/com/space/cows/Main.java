@@ -3,7 +3,10 @@ package com.space.cows;
 import java.util.*;
 
 /**
- * Created by Lhaion on 07/06/2017.
+ * Leonardo Antunes
+ * Leonardo Vignatti
+ * Lhaion
+ * Marcelo
  */
 public class Main {
 
