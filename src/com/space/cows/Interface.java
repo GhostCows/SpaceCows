@@ -244,8 +244,12 @@ public class Interface extends Game {
 
 				int[] points = points();
 
+				desenharString(String.valueOf(points[0]), 0, height / 2, WHITE, 24);
+				desenharString(String.valueOf(points[1]), 0, height / 2 + 30, WHITE, 24);
 
+				String msg = "O " + (farmerTurn == 1 ? "fazendeiro" : "alien") + " " + (gameEnd() ? "ganhou" : "deve jogar") + "!";
 
+				desenharString(msg, 0, 0);
 
 				for (int i = 0; i < length; i++) {
 					for (int j = 0; j < length; j++) {
@@ -568,6 +572,24 @@ public class Interface extends Game {
 	private class MouseInputHandler extends MouseAdapter {
 
 		@Override
+		public void mouseMoved(MouseEvent e) {
+
+			int x = e.getX();
+			int y = e.getY();
+
+			switch (screen) {
+				case 0:
+
+					break;
+				case 1:
+					break;
+				case 2:
+					break;
+			}
+
+		}
+
+		@Override
 		public void mousePressed(MouseEvent e) {
 
 			int x = e.getX();
@@ -644,10 +666,8 @@ public class Interface extends Game {
 
 						} else if(in(x, y, 1200, 390, 460)) {
 
-							screen = 1;
+							screen = 2;
 							gamemode = "PP";
-
-							indexEE = 0;
 
 						} else if(in(x, y, 1430, 875, 230, 113)) {
 
@@ -712,7 +732,7 @@ public class Interface extends Game {
 
 						int boardSize = 7 * slotSize;
 
-						if(in(x, y, marginLeft, marginTop, boardSize)) {
+						if(!gameEnd() && in(x, y, marginLeft, marginTop, boardSize)) {
 
 							int posX = x - r(marginLeft);
 							int posY = y - r(marginTop);
