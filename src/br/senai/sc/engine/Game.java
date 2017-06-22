@@ -16,7 +16,7 @@ public abstract class Game extends Canvas {
 	protected BufferStrategy strategy;
 	protected boolean gameRunning = true;
 	private boolean sairAoTermino = false;
-	private Graphics2D graphics2D;
+	protected Graphics2D graphics2D;
 	private Fps fps;
 	private Map<String, Mp3> musicas;
 	private Map<String, CustomFont> customFonts;

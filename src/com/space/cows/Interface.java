@@ -91,9 +91,17 @@ public class Interface extends Game {
 	private boolean ratioBig;
 	private boolean ratioSmall;
 
+	private int hover;
+	private int hoverx;
+	private int hovery;
+
+	private int frame;
+
 	private Image logoBig;
 	private Image backGround;
 	private Image popup;
+	private Image hoverBig;
+	private Image hoverSmall;
 
 	//<editor-fold desc="Screen 0">
 	private Image btnSingle;
@@ -150,6 +158,8 @@ public class Interface extends Game {
 		btnVoltar = carregarImagem("images/btn-voltar.png");
 		btnConfigSmall = carregarImagem("images/btn-config-small.png");
 		btnDesistir = carregarImagem("images/btn-desistir.png");
+		hoverBig = carregarImagem("images/hover-big.png");
+		hoverSmall = carregarImagem("images/hover-small.png");
 
 //		container.setIconImage(carregarImagem("images/icon.jpg"));
 
@@ -208,7 +218,7 @@ public class Interface extends Game {
 
 		fullscreen = ratioSmall;
 
-		System.out.println(ratio);
+		hover = 0;
 
 	}
 
@@ -226,6 +236,8 @@ public class Interface extends Game {
 			case 0: // tela inicial
 
 				drawImageVertex(logoBig, r(715), r(25), r(489), r(282));
+
+//				graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
 
 				drawImageVertex(btnSingle, r(260), r(390), r(460), r(460));
 
@@ -318,6 +330,8 @@ public class Interface extends Game {
 			}
 
 		}
+
+		desenharString(String.valueOf(frame++), 0,0);
 
 	}
 
@@ -606,7 +620,8 @@ public class Interface extends Game {
 
 			switch (screen) {
 				case 0:
-
+					hoverx = x;
+					hovery = y;
 					break;
 				case 1:
 					break;
