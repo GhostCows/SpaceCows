@@ -116,6 +116,8 @@ public class Main {
 			println("Que pena, você perdeu...");
 		}
 
+		printBoard(board);
+
 	}
 
 	private static boolean play(int[] move, int[][] board, boolean yourTurn, int[][] prevs) {

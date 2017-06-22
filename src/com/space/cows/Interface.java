@@ -1,6 +1,5 @@
 package com.space.cows;
 
-import br.senai.sc.engine.Fps;
 import br.senai.sc.engine.Game;
 import br.senai.sc.engine.Utils;
 
@@ -36,8 +35,11 @@ public class Interface extends Game {
 	//</editor-fold>
 
 	//<editor-fold desc="Variable Declarations">
+	private Dimension size;
 	private int width; // 1156
 	private int height; // 650
+	private int maxWidth; // 1920
+	private int maxHeight; // 1080
 	private int length; // 7
 	private int marginTop;
 	//	private int marginBottom;
@@ -71,7 +73,8 @@ public class Interface extends Game {
 
 	private Point initialClick;
 	private boolean dragging = false;
-	private boolean fullscreen = false;
+	private boolean fullscreen;
+	private Dimension fullscrn;
 
 	private int isPopup = 0;
 
@@ -83,6 +86,10 @@ public class Interface extends Game {
 
 	private int delayMin = 500; //default: 500ms  // must be greater than 0
 	private int delayMax = 2500; //default: 2500ms // must be greater than 0
+
+	private boolean ratioNull;
+	private boolean ratioBig;
+	private boolean ratioSmall;
 
 	private Image logoBig;
 	private Image backGround;
@@ -165,7 +172,17 @@ public class Interface extends Game {
 		width = 1156; // 1156
 		height = 650; // 650
 
-		ratio = ((double) height) / 1080;
+		maxWidth = 1920; // 1920
+		maxHeight = 1080; // 1080
+
+		size = new Dimension(width, height);
+
+		fullscrn = Toolkit.getDefaultToolkit().getScreenSize();
+
+		ratio = ((double) height) / maxHeight;
+		ratioNull = fullscrn.getWidth() == maxWidth && fullscrn.getHeight() == maxHeight;
+		ratioBig = fullscrn.getWidth() > maxWidth || fullscrn.getHeight() > maxHeight;
+		ratioSmall = fullscrn.getWidth() <= width || fullscrn.getHeight() <= height;
 
 		length = 7;
 
@@ -174,8 +191,6 @@ public class Interface extends Game {
 		farmerTurn = 1;
 
 		marginTop = 155;
-
-//		marginBottom = 15;
 		marginLeft = 505;
 
 		slotSize = 130;
@@ -184,6 +199,16 @@ public class Interface extends Game {
 		addNewFont("popup", "fonts/popup.ttf", popupFontSize, 0);
 
 		popupFont = getFont("popup");
+
+		if (ratioSmall) {
+			fullscreen();
+		}
+
+		fullscrn.setSize(Math.min(maxWidth, fullscrn.getWidth()), Math.min(maxHeight, fullscrn.getHeight()));
+
+		fullscreen = ratioSmall;
+
+		System.out.println(ratio);
 
 	}
 
@@ -335,17 +360,19 @@ public class Interface extends Game {
 
 			} else {
 				// Alert player to play only on free vacas
-				popup("Você só pode jogar em vacas vazios", () -> {});
+				popup("Você só pode jogar em vacas vazios", () -> {
+				});
 			}
 		} else {
 			// Alert player not to play twice on the same place
-			popup("Você não pode jogar duas vezes\nno mesmo lugar", () -> {});
+			popup("Você não pode jogar duas vezes\nno mesmo lugar", () -> {
+			});
 		}
 	}
 
 	private void makeMove() {
 
-		if(gamemode.charAt(0) == 'C') {
+		if (gamemode.charAt(0) == 'C') {
 
 			aiPlay();
 
@@ -598,14 +625,14 @@ public class Interface extends Game {
 			switch (screen) {
 				case 0:
 				case 1:
-					dragging = in(x, y,715, 25, 489, 282);
+					dragging = in(x, y, 715, 25, 489, 282);
 					break;
 				case 2:
-					dragging = in(x, y,845, 14, 228, 132);
+					dragging = in(x, y, 845, 14, 228, 132);
 					break;
 			}
 
-			if(dragging && !fullscreen) {
+			if (dragging && (!fullscreen || ratioBig)) {
 				initialClick = e.getPoint();
 				getComponentAt(initialClick);
 			}
@@ -615,7 +642,7 @@ public class Interface extends Game {
 		@Override
 		public void mouseDragged(MouseEvent e) {
 
-			if(dragging && !fullscreen) {
+			if (dragging && !fullscreen) {
 
 				Point loc = container.getLocation();
 
@@ -656,26 +683,26 @@ public class Interface extends Game {
 
 							indexEE = 0;
 
-						} else if(in(x, y, 730, 390, 460, 255)) {
+						} else if (in(x, y, 730, 390, 460, 255)) {
 
 							//perso
 
-						} else if(in(x, y, 730, 625, 460, 255)) {
+						} else if (in(x, y, 730, 625, 460, 255)) {
 
 							//config
 
-						} else if(in(x, y, 1200, 390, 460)) {
+						} else if (in(x, y, 1200, 390, 460)) {
 
 							screen = 2;
 							gamemode = "PP";
 
-						} else if(in(x, y, 1430, 875, 230, 113)) {
+						} else if (in(x, y, 1430, 875, 230, 113)) {
 
 							System.exit(0);
 
-						} else if(in(x, y, 715, 25, 489, 282)) {
+						} else if (in(x, y, 715, 25, 489, 282)) {
 
-							if(indexEE++ == eeNum - 1) {
+							if (indexEE++ == eeNum - 1) {
 
 								popup("Cuidado, Vacas Mordem", () -> indexEE = 0);
 
@@ -688,21 +715,21 @@ public class Interface extends Game {
 					//<editor-fold desc="Screen 1">
 					case 1:
 
-						if(in(x, y, 260, 390, 460)) {
+						if (in(x, y, 260, 390, 460)) {
 
 							difficulty = 0;
 							screen = 2;
 
 							makeMove();
 
-						} else if(in(x, y, 730, 390, 460)) {
+						} else if (in(x, y, 730, 390, 460)) {
 
 							difficulty = 1;
 							screen = 2;
 
 							makeMove();
 
-						} else if(in(x, y, 1200, 390, 460)) {
+						} else if (in(x, y, 1200, 390, 460)) {
 
 							difficulty = 2;
 							screen = 2;
@@ -713,7 +740,7 @@ public class Interface extends Game {
 
 							indexEE++;
 
-							if(indexEE == eeNum) {
+							if (indexEE == eeNum) {
 								gamemode = "CC";
 							}
 
@@ -732,7 +759,7 @@ public class Interface extends Game {
 
 						int boardSize = 7 * slotSize;
 
-						if(!gameEnd() && in(x, y, marginLeft, marginTop, boardSize)) {
+						if (!gameEnd() && in(x, y, marginLeft, marginTop, boardSize)) {
 
 							int posX = x - r(marginLeft);
 							int posY = y - r(marginTop);
@@ -773,6 +800,8 @@ public class Interface extends Game {
 						gamemode = "PC";
 						indexEE = 0;
 
+						board = new int[length][length];
+
 						if (screen <= 0) {
 							System.exit(0);
 						} else {
@@ -783,7 +812,9 @@ public class Interface extends Game {
 						}
 						break;
 					case KeyEvent.VK_F11:
-						fullscreen();
+						if (!ratioSmall) {
+							fullscreen();
+						}
 						break;
 				}
 
@@ -798,20 +829,20 @@ public class Interface extends Game {
 
 		Dimension fullscreen;
 
-		if(this.fullscreen) {
+		if (this.fullscreen) {
 
-			fullscreen = Toolkit.getDefaultToolkit().getScreenSize();
+			fullscreen = fullscrn;
 
 		} else {
 
-			fullscreen = new Dimension(1156, 650);
+			fullscreen = size;
 
 		}
 
 		width = (int) fullscreen.getWidth();
 		height = (int) fullscreen.getHeight();
 
-		ratio = ((double) height) / 1080;
+		ratio = ((double) height) / maxHeight;
 
 		container.dispose();
 
@@ -820,7 +851,7 @@ public class Interface extends Game {
 
 		container = new JFrame(Utils.getInstance().getNomeJogo());
 		container.setUndecorated(true);
-		JPanel panel = (JPanel)this.container.getContentPane();
+		JPanel panel = (JPanel) this.container.getContentPane();
 		panel.setPreferredSize(fullscreen);
 		panel.setLayout(null);
 		setBounds(0, 0, width, height);
@@ -835,10 +866,10 @@ public class Interface extends Game {
 		});
 		container.setVisible(true);
 		requestFocus();
+		createBufferStrategy(2);
+		strategy = getBufferStrategy();
 
-		if(!this.fullscreen) {
-			container.setLocationRelativeTo(null);
-		}
+		container.setLocationRelativeTo(null);
 
 	}
 
