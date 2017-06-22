@@ -27,7 +27,7 @@ public abstract class Game extends Canvas {
 		Utils.getInstance().setWidth(fullscreen.width);
 		this.container = new JFrame(Utils.getInstance().getNomeJogo());
 		this.container.setUndecorated(true);
-		JPanel panel = (JPanel)this.container.getContentPane();
+		JPanel panel = (JPanel) this.container.getContentPane();
 		panel.setPreferredSize(new Dimension(Utils.getInstance().getWidth(), Utils.getInstance().getHeight()));
 		panel.setLayout(null);
 		this.setBounds(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
@@ -83,8 +83,8 @@ public abstract class Game extends Canvas {
 	public abstract void init();
 
 	public void startGame() {
-		while(this.gameRunning) {
-			this.graphics2D = (Graphics2D)this.strategy.getDrawGraphics();
+		while (this.gameRunning) {
+			this.graphics2D = (Graphics2D) this.strategy.getDrawGraphics();
 			this.fps.updateFPS();
 			this.graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 			this.graphics2D.setColor(Color.white);
@@ -96,7 +96,7 @@ public abstract class Game extends Canvas {
 		}
 
 		this.aposTermino();
-		if(this.sairAoTermino) {
+		if (this.sairAoTermino) {
 			System.exit(0);
 		}
 
@@ -107,7 +107,7 @@ public abstract class Game extends Canvas {
 	}
 
 	public void desenharImagem(Image image, int x, int y) {
-		this.graphics2D.drawImage(image, x, y, (ImageObserver)null);
+		this.graphics2D.drawImage(image, x, y, (ImageObserver) null);
 	}
 
 	public void desenharString(String mensagem, int x, int y) {
@@ -165,7 +165,7 @@ public abstract class Game extends Canvas {
 	public void adicionarAudio(String nome, String path) {
 		Mp3 mp3 = new Mp3();
 		mp3.carregar(path);
-		if(this.musicas.get(nome) != null) {
+		if (this.musicas.get(nome) != null) {
 			this.musicas.remove(nome);
 		}
 
@@ -182,11 +182,11 @@ public abstract class Game extends Canvas {
 	}
 
 	public void pararAudio(String nome) {
-		((Mp3)this.musicas.get(nome)).finalizar();
+		((Mp3) this.musicas.get(nome)).finalizar();
 	}
 
 	public boolean audioIsCompleted(String nome) {
-		return this.musicas.get(nome) != null?((Mp3)this.musicas.get(nome)).isCompleted():true;
+		return this.musicas.get(nome) != null ? ((Mp3) this.musicas.get(nome)).isCompleted() : true;
 	}
 
 	public void removerAudio(String nome) {
@@ -209,7 +209,7 @@ public abstract class Game extends Canvas {
 	}
 
 	public void setFont(String name) {
-		this.graphics2D.setFont(((CustomFont)this.customFonts.get(name)).getCustomFont());
+		this.graphics2D.setFont(((CustomFont) this.customFonts.get(name)).getCustomFont());
 	}
 
 	public Graphics2D getGraphics2D() {
