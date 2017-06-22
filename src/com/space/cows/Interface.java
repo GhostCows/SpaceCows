@@ -55,7 +55,7 @@ public class Interface extends Game {
 	 * 2 Test Screen
 	 * 3 Settings Screen
 	 */
-	private int screen = 0;
+	private int screen = 3;
 	private int difficulty = 0;
 
 	private String gamemode;
@@ -92,8 +92,7 @@ public class Interface extends Game {
 	private boolean ratioSmall;
 
 	private int hover;
-	private int hoverx;
-	private int hovery;
+	private int hoverSize;
 
 	private int frame;
 
@@ -315,6 +314,8 @@ public class Interface extends Game {
 
 				break;
 			//</editor-fold>
+			case 3:
+				System.out.println("teste");
 		}
 
 		if (isPopup != 0) {
@@ -620,8 +621,17 @@ public class Interface extends Game {
 
 			switch (screen) {
 				case 0:
-					hoverx = x;
-					hovery = y;
+
+					if(in(x, y, r(260), r(390), r(460))) {
+						hover = 1;
+					} else if(in(x, y, r(730), r(390), r(460), r(225))) {
+						hover = 2;
+					} else if(in(x, y, r(730), r(625), r(460), r(225))) {
+						hover = 3;
+					} else if(in(x, y, r(1200), r(390), r(460))) {
+						hover = 4;
+					}
+
 					break;
 				case 1:
 					break;

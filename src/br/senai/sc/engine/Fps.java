@@ -80,6 +80,8 @@ public class Fps {
 
 		this.lastFPSMs += (long)this.getDelta();
 		++this.fps;
+		System.out.println(this.lastFPSMs);
+		System.out.println(this.fps);
 	}
 
 	public void synchronize() {
