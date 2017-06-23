@@ -83,6 +83,7 @@ public abstract class Game extends Canvas {
 	public abstract void init();
 
 	public void startGame() {
+		int i = 0;
 		while (this.gameRunning) {
 			this.graphics2D = (Graphics2D) this.strategy.getDrawGraphics();
 			this.fps.updateFPS();
@@ -93,6 +94,7 @@ public abstract class Game extends Canvas {
 			this.graphics2D.dispose();
 			this.strategy.show();
 			this.fps.synchronize();
+			System.out.println(i++);
 		}
 
 		this.aposTermino();
