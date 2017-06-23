@@ -55,7 +55,7 @@ public class Interface extends Game {
 	 * 2 Test Screen
 	 * 3 Settings Screen
 	 */
-	private int screen = 3;
+	private int screen = 0;
 	private int difficulty = 0;
 
 	private String gamemode;
@@ -91,96 +91,101 @@ public class Interface extends Game {
 	private boolean ratioBig;
 	private boolean ratioSmall;
 
-	private int hover;
-	private int hoverSize;
-
-	private int frame;
-
-	private HashMap<String, Object> images;
-
 	private Image logoBig;
-	private Image logoBigF;
+	private Image logoBigR;
+	private Image logoBigO;
 	private Image backGround;
-	private Image backGroundF;
+	private Image backGroundR;
+	private Image backGroundO;
 	private Image popup;
-	private Image popupF;
-	private Image hoverBig;
-	private Image hoverBigF;
-	private Image hoverSmall;
-	private Image hoverSmallF;
+	private Image popupR;
+	private Image popupO;
 
 	//<editor-fold desc="Screen 0">
 	private Image btnSingle;
-	private Image btnSingleF;
+	private Image btnSingleR;
+	private Image btnSingleO;
 	private Image btnPersonalizar;
-	private Image btnPersonalizarF;
+	private Image btnPersonalizarR;
+	private Image btnPersonalizarO;
 	private Image btnConfig;
-	private Image btnConfigF;
+	private Image btnConfigR;
+	private Image btnConfigO;
 	private Image btnDual;
-	private Image btnDualF;
+	private Image btnDualR;
+	private Image btnDualO;
 	private Image btnSair;
-	private Image btnSairF;
+	private Image btnSairR;
+	private Image btnSairO;
 	//</editor-fold>
 
 	//<editor-fold desc="Screen 1">
 	private Image btnFacil;
-	private Image btnFacilF;
+	private Image btnFacilR;
+	private Image btnFacilO;
 	private Image btnMedio;
-	private Image btnMedioF;
+	private Image btnMedioR;
+	private Image btnMedioO;
 	private Image btnDificil;
-	private Image btnDificilF;
+	private Image btnDificilR;
+	private Image btnDificilO;
 	private Image btnVoltar;
-	private Image btnVoltarF;
+	private Image btnVoltarR;
+	private Image btnVoltarO;
 	//</editor-fold>
 
 	//<editor-fold desc="Screen 2">
 	private Image[] vacas;
-	private Image[] vacasF;
+	private Image[] vacasR;
+	private Image[] vacasO;
 	private Image[] slots;
-	private Image[] slotsF;
+	private Image[] slotsR;
+	private Image[] slotsO;
 	private Image logoSmall;
-	private Image logoSmallF;
+	private Image logoSmallR;
+	private Image logoSmallO;
 	private Image btnConfigSmall;
-	private Image btnConfigSmallF;
+	private Image btnConfigSmallR;
+	private Image btnConfigSmallO;
 	private Image[] placares;
-	private Image[] placaresF;
+	private Image[] placaresR;
+	private Image[] placaresO;
 	private Image btnDesistir;
-	private Image btnDesistirF;
+	private Image btnDesistirR;
+	private Image btnDesistirO;
 	//</editor-fold>
 	//</editor-fold>
 
 	@Override
 	public void init() {
 
-		vacas = new Image[2];
-		vacas[0] = carregarImagem("images/vaca-terra.png");
-		vacas[1] = carregarImagem("images/vaca-alien-no_bright.png");
+		vacasO = new Image[2];
+		vacasO[0] = carregarImagem("images/vaca-terra.png");
+		vacasO[1] = carregarImagem("images/vaca-alien-no_bright.png");
 
-		placares = new Image[2];
-		placares[0] = carregarImagem("images/placar-terra.png");
-		placares[1] = carregarImagem("images/placar-alien.png");
+		placaresO = new Image[2];
+		placaresO[0] = carregarImagem("images/placar-terra.png");
+		placaresO[1] = carregarImagem("images/placar-alien.png");
 
-		slots = new Image[2];
-		slots[0] = carregarImagem("images/casa-clara.png");
-		slots[1] = carregarImagem("images/casa-escura.png");
+		slotsO = new Image[2];
+		slotsO[0] = carregarImagem("images/casa-clara.png");
+		slotsO[1] = carregarImagem("images/casa-escura.png");
 
-		popup = carregarImagem("images/popup.png");
-		logoBig = carregarImagem("images/logo-big.png");
-		logoSmall = carregarImagem("images/logo-small.png");
-		backGround = carregarImagem("images/bg.png");
-		btnSingle = carregarImagem("images/btn-single.png");
-		btnPersonalizar = carregarImagem("images/btn-perso.png");
-		btnConfig = carregarImagem("images/btn-config.png");
-		btnDual = carregarImagem("images/btn-dual.png");
-		btnSair = carregarImagem("images/btn-sair.png");
-		btnFacil = carregarImagem("images/btn-facil.png");
-		btnMedio = carregarImagem("images/btn-medio.png");
-		btnDificil = carregarImagem("images/btn-dificil.png");
-		btnVoltar = carregarImagem("images/btn-voltar.png");
-		btnConfigSmall = carregarImagem("images/btn-config-small.png");
-		btnDesistir = carregarImagem("images/btn-desistir.png");
-		hoverBig = carregarImagem("images/hover-big.png");
-		hoverSmall = carregarImagem("images/hover-small.png");
+		popupO = carregarImagem("images/popup.png");
+		logoBigO = carregarImagem("images/logo-big.png");
+		logoSmallO = carregarImagem("images/logo-small.png");
+		backGroundO = carregarImagem("images/bg.png");
+		btnSingleO = carregarImagem("images/btn-single.png");
+		btnPersonalizarO = carregarImagem("images/btn-perso.png");
+		btnConfigO = carregarImagem("images/btn-config.png");
+		btnDualO = carregarImagem("images/btn-dual.png");
+		btnSairO = carregarImagem("images/btn-sair.png");
+		btnFacilO = carregarImagem("images/btn-facil.png");
+		btnMedioO = carregarImagem("images/btn-medio.png");
+		btnDificilO = carregarImagem("images/btn-dificil.png");
+		btnVoltarO = carregarImagem("images/btn-voltar.png");
+		btnConfigSmallO = carregarImagem("images/btn-config-small.png");
+		btnDesistirO = carregarImagem("images/btn-desistir.png");
 
 //		container.setIconImage(carregarImagem("images/icon.jpg"));
 
@@ -239,87 +244,65 @@ public class Interface extends Game {
 
 		fullscreen = ratioSmall;
 
-		hover = 0;
+		vacasR = new Image[2];
+		vacasR[0] = vacasO[0].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
+		vacasR[1] = vacasO[1].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
+		placaresR = new Image[2];
+		placaresR[0] = placaresO[0].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
+		placaresR[1] = placaresO[1].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
+		slotsR = new Image[2];
+		slotsR[0] = slotsO[0].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
+		slotsR[1] = slotsO[1].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
+		popupR = popupO.getScaledInstance(r(595), r(333), Image.SCALE_SMOOTH);
+		logoBigR = logoBigO.getScaledInstance(r(489), r(282), Image.SCALE_SMOOTH);
+		logoSmallR = logoSmallO.getScaledInstance(r(228), r(132), Image.SCALE_SMOOTH);
+		backGroundR = backGroundO.getScaledInstance(r(1920), r(1080), Image.SCALE_SMOOTH);
+		btnSingleR = btnSingleO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnPersonalizarR = btnPersonalizarO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
+		btnConfigR = btnConfigO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
+		btnDualR = btnDualO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnSairR = btnSairO.getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
+		btnFacilR = btnFacilO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnMedioR = btnMedioO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnDificilR = btnDificilO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnVoltarR = btnVoltarO.getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
+		btnConfigSmallR = btnConfigSmallO.getScaledInstance(r(57), r(58), Image.SCALE_SMOOTH);
+		btnDesistirR = btnDesistirO.getScaledInstance(r(161), r(34), Image.SCALE_SMOOTH);
 
-		vacasF = new Image[2];
-		vacasF[0] = vacas[0].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
-		vacasF[1] = vacas[1].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
+		double prevRatio = ratio;
+		ratio = ((double) fullscrn.height) / maxHeight;
 
-		placaresF = new Image[2];
-		placaresF[0] = placares[0].getScaledInstance(r(258), r(172), Image.SCALE_SMOOTH);
-		placaresF[1] = placares[1].getScaledInstance(r(258), r(172), Image.SCALE_SMOOTH);
+		vacasO[0] = vacasO[0].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
+		vacasO[1] = vacasO[1].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
+		placaresO[0] = placaresO[0].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
+		placaresO[1] = placaresO[1].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
+		slotsO[0] = slotsO[0].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
+		slotsO[1] = slotsO[1].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
+		popupO = popupO.getScaledInstance(r(595), r(333), Image.SCALE_SMOOTH);
+		logoBigO = logoBigO.getScaledInstance(r(489), r(282), Image.SCALE_SMOOTH);
+		logoSmallO = logoSmallO.getScaledInstance(r(228), r(132), Image.SCALE_SMOOTH);
+		backGroundO = backGroundO.getScaledInstance(r(1920), r(1080), Image.SCALE_SMOOTH);
+		btnSingleO = btnSingleO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnPersonalizarO = btnPersonalizarO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
+		btnConfigO = btnConfigO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
+		btnDualO = btnDualO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnSairO = btnSairO.getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
+		btnFacilO = btnFacilO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnMedioO = btnMedioO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnDificilO = btnDificilO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		btnVoltarO = btnVoltarO.getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
+		btnConfigSmallO = btnConfigSmallO.getScaledInstance(r(57), r(58), Image.SCALE_SMOOTH);
+		btnDesistirO = btnDesistirO.getScaledInstance(r(161), r(34), Image.SCALE_SMOOTH);
 
-		slotsF = new Image[2];
-		slotsF[0] = slots[0].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
-		slotsF[1] = slots[1].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
+		ratio = prevRatio;
 
-		popupF = popup.getScaledInstance(r(596), r(333), Image.SCALE_SMOOTH);
-		logoBigF = logoBig.getScaledInstance(r(489), r(282), Image.SCALE_SMOOTH);
-		logoSmallF = logoSmall.getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
-		backGroundF = backGround.getScaledInstance(r(1920), r(1080), Image.SCALE_SMOOTH);
-		btnSingleF = btnSingle.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
-		btnPersonalizarF = btnPersonalizar.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
-		btnConfigF = btnConfig.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
-		btnDualF = btnDual.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
-		btnSairF = btnSair.getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
-		btnFacilF = btnFacil.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
-		btnMedioF = btnMedio.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
-		btnDificilF = btnDificil.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
-		btnVoltarF = btnVoltar.getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
-		btnConfigSmallF = btnConfigSmall.getScaledInstance(r(57), r(58), Image.SCALE_SMOOTH);
-		btnDesistirF = btnDesistir.getScaledInstance(r(161), r(34), Image.SCALE_SMOOTH);
-		hoverBigF = hoverBig.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
-		hoverSmallF = hoverSmall.getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
-
-		images = new HashMap<>();
-
-		images.put("vacasF", vacasF);
-		images.put("placaresF", placaresF);
-		images.put("slotsF", slotsF);
-		images.put("popupF", popupF);
-		images.put("logoBigF", logoBigF);
-		images.put("logoSmallF", logoSmallF);
-		images.put("backGroundF", backGroundF);
-		images.put("btnSingleF", btnSingleF);
-		images.put("btnPersonalizarF", btnPersonalizarF);
-		images.put("btnConfigF", btnConfigF);
-		images.put("btnDualF", btnDualF);
-		images.put("btnSairF", btnSairF);
-		images.put("btnFacilF", btnFacilF);
-		images.put("btnMedioF", btnMedioF);
-		images.put("btnDificilF", btnDificilF);
-		images.put("btnVoltarF", btnVoltarF);
-		images.put("btnConfigSmallF", btnConfigSmallF);
-		images.put("btnDesistirF", btnDesistirF);
-		images.put("hoverBigF", hoverBigF);
-		images.put("hoverSmallF", hoverSmallF);
-		images.put("vacas", vacas);
-		images.put("placares", placares);
-		images.put("slots", slots);
-		images.put("popup", popup);
-		images.put("logoBig", logoBig);
-		images.put("logoSmall", logoSmall);
-		images.put("backGround", backGround);
-		images.put("btnSingle", btnSingle);
-		images.put("btnPersonalizar", btnPersonalizar);
-		images.put("btnConfig", btnConfig);
-		images.put("btnDual", btnDual);
-		images.put("btnSair", btnSair);
-		images.put("btnFacil", btnFacil);
-		images.put("btnMedio", btnMedio);
-		images.put("btnDificil", btnDificil);
-		images.put("btnVoltar", btnVoltar);
-		images.put("btnConfigSmall", btnConfigSmall);
-		images.put("btnDesistir", btnDesistir);
-		images.put("hoverBig", hoverBig);
-		images.put("hoverSmall", hoverSmall);
-
+		setImagesSmall();
 	}
 
 	@Override
 	public void gameLoop() {
 
-		drawBg();
+		drawImageVertex(backGround, 0, 0);
 
 		switch (screen) {
 			//<editor-fold desc="Screen -1">
@@ -329,50 +312,48 @@ public class Interface extends Game {
 			//<editor-fold desc="Screen 0">
 			case 0: // tela inicial
 
-//				drawImageVertex(logoBig, r(715), r(25), r(489), r(282));
+				drawImageVertex(logoBig, r(715), r(25));
 
-//				graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f));
+				drawImageVertex(btnSingle, r(260), r(390));
 
-//				drawImageVertex(btnSingle, r(260), r(390), r(460), r(460));
+				drawImageVertex(btnPersonalizar, r(730), r(390));
 
-//				drawImageVertex(btnPersonalizar, r(730), r(390), r(460), r(225));
+				drawImageVertex(btnConfig, r(730), r(625));
 
-//				drawImageVertex(btnConfig, r(730), r(625), r(460), r(225));
+				drawImageVertex(btnDual, r(1200), r(390));
 
-//				drawImageVertex(btnDual, r(1200), r(390), r(460), r(460));
-
-//				drawImageVertex(btnSair, r(1430), r(875), r(230), r(113));
+				drawImageVertex(btnSair, r(1430), r(875));
 
 				break;
 			//</editor-fold>
 			//<editor-fold desc="Screen 1">
 			case 1: // configurações
 
-//				drawImageVertex(logoBig, r(715), r(25), r(489), r(282));
-//
-//				drawImageVertex(btnFacil, r(260), r(390), r(460), r(460));
-//
-//				drawImageVertex(btnMedio, r(730), r(390), r(460), r(460));
-//
-//				drawImageVertex(btnDificil, r(1200), r(390), r(460), r(460));
-//
-//				drawImageVertex(btnVoltar, r(260), r(875), r(230), r(113));
+				drawImageVertex(logoBig, r(715), r(25));
+
+				drawImageVertex(btnFacil, r(260), r(390));
+
+				drawImageVertex(btnMedio, r(730), r(390));
+
+				drawImageVertex(btnDificil, r(1200), r(390));
+
+				drawImageVertex(btnVoltar, r(260), r(875));
 
 				break;
 			//</editor-fold>
 			//<editor-fold desc="Screen 2">
 			case 2:
 
-//				drawImageVertex(logoSmall, r(845), r(14), r(228), r(132));
-//
-//				drawImageVertex(btnConfigSmall, r(764), r(80), r(57), r(58));
-//
-//				drawImageVertex(placares[0], r(220), r(435), r(258), r(172));
-//				drawImageVertex(placares[1], r(1440), r(435), r(260), r(173));
-//
-//				drawImageVertex(btnDesistir, r(285), r(610), r(161), r(34));
-//				drawImageVertex(btnDesistir, r(1475), r(610), r(161), r(34));
-//
+				drawImageVertex(logoSmall, r(845), r(14));
+
+				drawImageVertex(btnConfigSmall, r(764), r(80));
+
+				drawImageVertex(placares[0], r(220), r(435));
+				drawImageVertex(placares[1], r(1440), r(435));
+
+				drawImageVertex(btnDesistir, r(285), r(610));
+				drawImageVertex(btnDesistir, r(1475), r(610));
+
 				int[] points = points();
 
 				desenharString(String.valueOf(points[0]), 0, height / 2, WHITE, 24);
@@ -392,7 +373,7 @@ public class Interface extends Game {
 						int x = r(marginLeft) + size * i;
 						int y = r(marginTop) + size * j;
 
-//						drawImageVertex(slot, x, y, size, size);
+						drawImageVertex(slot, x, y);
 
 						int num = board[i][j];
 
@@ -400,7 +381,7 @@ public class Interface extends Game {
 
 							Image cow = vacas[num - 1];
 
-//							drawImageCenter(cow, x + size / 2, y + size / 2, r(129), r(104));
+							drawImageCenter(cow, x + size / 2, y + size / 2);
 
 						}
 
@@ -424,8 +405,6 @@ public class Interface extends Game {
 			}
 
 		}
-
-		desenharString(String.valueOf(frame++), 0, 0, BLACK);
 
 	}
 
@@ -715,16 +694,6 @@ public class Interface extends Game {
 			switch (screen) {
 				case 0:
 
-					if (in(x, y, r(260), r(390), r(460))) {
-						hover = 1;
-					} else if (in(x, y, r(730), r(390), r(460), r(225))) {
-						hover = 2;
-					} else if (in(x, y, r(730), r(625), r(460), r(225))) {
-						hover = 3;
-					} else if (in(x, y, r(1200), r(390), r(460))) {
-						hover = 4;
-					}
-
 					break;
 				case 1:
 					break;
@@ -957,6 +926,8 @@ public class Interface extends Game {
 
 		}
 
+		setImagesBig();
+
 		width = (int) fullscreen.getWidth();
 		height = (int) fullscreen.getHeight();
 
@@ -982,12 +953,11 @@ public class Interface extends Game {
 				System.exit(0);
 			}
 		});
+		container.setLocationRelativeTo(null);
 		container.setVisible(true);
 		requestFocus();
 		createBufferStrategy(2);
 		strategy = getBufferStrategy();
-
-		container.setLocationRelativeTo(null);
 
 	}
 
@@ -1046,8 +1016,54 @@ public class Interface extends Game {
 
 		drawRectVertex(0, 0, width, height * 2, new Color(0, 0, 0, 150));
 
-//		drawImageCenter(popup, width / 2, height / 2, r(596), r(333));
+		drawImageCenter(popup, width / 2, height / 2);
 
+	}
+	
+	private void setImagesSmall() {
+
+		vacas = vacasR;
+		placares = placaresR;
+		slots = slotsR;
+		popup = popupR;
+		logoBig = logoBigR;
+		logoSmall = logoSmallR;
+		backGround = backGroundR;
+		btnSingle = btnSingleR;
+		btnPersonalizar = btnPersonalizarR;
+		btnConfig = btnConfigR;
+		btnDual = btnDualR;
+		btnSair = btnSairR;
+		btnFacil = btnFacilR;
+		btnMedio = btnMedioR;
+		btnDificil = btnDificilR;
+		btnVoltar = btnVoltarR;
+		btnConfigSmall = btnConfigSmallR;
+		btnDesistir = btnDesistirR;
+		
+	}
+	
+	private void setImagesBig() {
+
+		vacas = vacasO;
+		placares = placaresO;
+		slots = slotsO;
+		popup = popupO;
+		logoBig = logoBigO;
+		logoSmall = logoSmallO;
+		backGround = backGroundO;
+		btnSingle = btnSingleO;
+		btnPersonalizar = btnPersonalizarO;
+		btnConfig = btnConfigO;
+		btnDual = btnDualO;
+		btnSair = btnSairO;
+		btnFacil = btnFacilO;
+		btnMedio = btnMedioO;
+		btnDificil = btnDificilO;
+		btnVoltar = btnVoltarO;
+		btnConfigSmall = btnConfigSmallO;
+		btnDesistir = btnDesistirO;
+		
 	}
 	//</editor-fold>
 
@@ -1060,32 +1076,13 @@ public class Interface extends Game {
 		return Math.max(n, m);
 	}
 
-	private Image getImage(String imgName, Integer i) {
-		Object o = images.get(imgName + (fullscreen ? "" : "F"));
-		Image img;
-		if(i == null) {
-			img = (Image) o;
-		} else {
-			img = ((Image[]) o)[i];
-		}
-		return img;
-	}
+	private void drawBG() {
 
-	private void drawImageCenter(String imgName, int x, int y, int width, int height, int i) {
-
-		desenharImagem(getImage(imgName, i), x - width / 2, y - height / 2);
+		desenharRetangulo(0, 0, 1040, 650, new Color(18, 18, 18));
 
 	}
 
-	private void drawImageCenter(String imgName, int x, int y, int width, int height) {
-
-		desenharImagem(getImage(imgName, null), x - width / 2, y - height / 2);
-
-	}
-
-	private void drawImageCenter(String imgName, int x, int y) {
-
-		Image img = getImage(imgName, null);
+	private void drawImageCenter(Image img, int x, int y) {
 
 		BufferedImage bimg = (BufferedImage) img;
 
@@ -1093,37 +1090,9 @@ public class Interface extends Game {
 
 	}
 
-	private void drawImageCenter(String imgName, int x, int y, int i) {
+	private void drawImageVertex(Image img, int x, int y) {
 
-		Image img = getImage(imgName, i);
-
-		BufferedImage bimg = (BufferedImage) img;
-
-		desenharImagem(img, x - bimg.getWidth() / 2, y - bimg.getHeight() / 2);
-
-	}
-
-	private void drawImageVertex(String imgName, int x, int y, int width, int height) {
-
-		desenharImagem(getImage(imgName, null), x, y);
-
-	}
-
-	private void drawImageVertex(String imgName, int x, int y, int width, int height, int i) {
-
-		desenharImagem(getImage(imgName, i), x, y);
-
-	}
-
-	private void drawImageVertex(String imgName, int x, int y) {
-
-		desenharImagem(getImage(imgName, null), x, y);
-
-	}
-
-	private void drawImageVertex(String imgName, int x, int y, int i) {
-
-		desenharImagem(getImage(imgName, i), x, y);
+		desenharImagem(img, x, y);
 
 	}
 
@@ -1148,9 +1117,19 @@ public class Interface extends Game {
 		g.drawString(text, x1, y1);
 	}
 
-	private void drawBg() {
+	private Image getScaledBg() {
 
-		drawImageVertex("backGround", 0, 0, width + 100, height + 100);
+		Image scaled = backGround.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+		return cropImage(scaled, 0, 0, width, height);
+
+	}
+
+	private Image cropImage(Image img, int x, int y, int width, int height) {
+
+		BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		bimg.getGraphics().drawImage(img, 0, 0, width, height, x, y, x + width, y + height, null);
+
+		return bimg.getScaledInstance(width, height, 0);
 
 	}
 
