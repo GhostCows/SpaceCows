@@ -86,6 +86,7 @@ public class Fps {
 	public void synchronize(boolean p) {
 		if(p) {
 			while (pause) {
+				System.out.print("");
 			}
 		}
 		long ms = this.lastFrameTime - this.getTime() + this.optimalTime;

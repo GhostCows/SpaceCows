@@ -302,6 +302,8 @@ public class Interface extends Game {
 	@Override
 	public void gameLoop() {
 
+//		System.out.println("a");
+
 		drawImageVertex(backGround, 0, 0);
 
 		switch (screen) {
@@ -931,8 +933,8 @@ public class Interface extends Game {
 
 		}
 
-		width = (int) fullscreen.getWidth();
-		height = (int) fullscreen.getHeight();
+		width = fullscreen.width;
+		height = fullscreen.height;
 
 		ratio = ((double) height) / maxHeight;
 
@@ -956,7 +958,9 @@ public class Interface extends Game {
 				System.exit(0);
 			}
 		});
-		container.setLocationRelativeTo(null);
+		if (!this.fullscreen) {
+			container.setLocationRelativeTo(null);
+		}
 		container.setVisible(true);
 		requestFocus();
 		createBufferStrategy(2);
@@ -1101,12 +1105,6 @@ public class Interface extends Game {
 
 	}
 
-	private void drawRectCenter(int x, int y, int width, int height, Color c) {
-
-		desenharRetangulo(x - width / 2, y - height / 2, width, height, c);
-
-	}
-
 	private void drawRectVertex(int x, int y, int width, int height, Color c) {
 
 		desenharRetangulo(x, y, height, width, c);
@@ -1120,15 +1118,6 @@ public class Interface extends Game {
 		int y1 = y + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
 		g.setFont(font);
 		g.drawString(text, x1, y1);
-	}
-
-	private Image cropImage(Image img, int x, int y, int width, int height) {
-
-		BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		bimg.getGraphics().drawImage(img, 0, 0, width, height, x, y, x + width, y + height, null);
-
-		return bimg.getScaledInstance(width, height, 0);
-
 	}
 
 	private boolean between(int min, int num, int max) {
