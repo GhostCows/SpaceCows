@@ -17,7 +17,7 @@ public abstract class Game extends Canvas {
 	protected boolean gameRunning = true;
 	private boolean sairAoTermino = false;
 	protected Graphics2D graphics2D;
-	private Fps fps;
+	protected Fps fps;
 	private Map<String, Mp3> musicas;
 	private Map<String, CustomFont> customFonts;
 
@@ -83,7 +83,6 @@ public abstract class Game extends Canvas {
 	public abstract void init();
 
 	public void startGame() {
-		int i = 0;
 		while (this.gameRunning) {
 			this.graphics2D = (Graphics2D) this.strategy.getDrawGraphics();
 			this.fps.updateFPS();
@@ -93,8 +92,7 @@ public abstract class Game extends Canvas {
 			this.gameLoop();
 			this.graphics2D.dispose();
 			this.strategy.show();
-			this.fps.synchronize();
-			System.out.println(i++);
+			this.fps.synchronize(true);
 		}
 
 		this.aposTermino();

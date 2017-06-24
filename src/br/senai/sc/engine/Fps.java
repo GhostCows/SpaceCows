@@ -6,6 +6,7 @@ public class Fps {
 	private long lastFrameTime;
 	private int fps;
 	private long lastFPSMs;
+	private boolean pause;
 
 	public Fps() {
 		this.optimalTime = (long)(1000 / this.targetFps);
@@ -80,11 +81,13 @@ public class Fps {
 
 		this.lastFPSMs += (long)this.getDelta();
 		++this.fps;
-		System.out.println(this.lastFPSMs);
-		System.out.println(this.fps);
 	}
 
-	public void synchronize() {
+	public void synchronize(boolean p) {
+		if(p) {
+			while (pause) {
+			}
+		}
 		long ms = this.lastFrameTime - this.getTime() + this.optimalTime;
 
 		try {
@@ -96,5 +99,9 @@ public class Fps {
 			System.exit(-1);
 		}
 
+	}
+
+	public void setPause(boolean pause) {
+		this.pause = pause;
 	}
 }

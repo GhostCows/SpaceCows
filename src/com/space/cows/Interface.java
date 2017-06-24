@@ -256,7 +256,7 @@ public class Interface extends Game {
 		popupR = popupO.getScaledInstance(r(595), r(333), Image.SCALE_SMOOTH);
 		logoBigR = logoBigO.getScaledInstance(r(489), r(282), Image.SCALE_SMOOTH);
 		logoSmallR = logoSmallO.getScaledInstance(r(228), r(132), Image.SCALE_SMOOTH);
-		backGroundR = backGroundO.getScaledInstance(r(1920), r(1080), Image.SCALE_SMOOTH);
+		backGroundR = backGroundO.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
 		btnSingleR = btnSingleO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
 		btnPersonalizarR = btnPersonalizarO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
 		btnConfigR = btnConfigO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
@@ -281,7 +281,7 @@ public class Interface extends Game {
 		popupO = popupO.getScaledInstance(r(595), r(333), Image.SCALE_SMOOTH);
 		logoBigO = logoBigO.getScaledInstance(r(489), r(282), Image.SCALE_SMOOTH);
 		logoSmallO = logoSmallO.getScaledInstance(r(228), r(132), Image.SCALE_SMOOTH);
-		backGroundO = backGroundO.getScaledInstance(r(1920), r(1080), Image.SCALE_SMOOTH);
+		backGroundO = backGroundO.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
 		btnSingleO = btnSingleO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
 		btnPersonalizarO = btnPersonalizarO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
 		btnConfigO = btnConfigO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
@@ -912,6 +912,9 @@ public class Interface extends Game {
 
 	private void fullscreen() {
 
+		fps.setPause(true);
+		fps.synchronize(false);
+
 		fullscreen = !fullscreen;
 
 		Dimension fullscreen;
@@ -919,14 +922,14 @@ public class Interface extends Game {
 		if (this.fullscreen) {
 
 			fullscreen = fullscrn;
+			setImagesBig();
 
 		} else {
 
 			fullscreen = size;
+			setImagesSmall();
 
 		}
-
-		setImagesBig();
 
 		width = (int) fullscreen.getWidth();
 		height = (int) fullscreen.getHeight();
@@ -959,11 +962,13 @@ public class Interface extends Game {
 		createBufferStrategy(2);
 		strategy = getBufferStrategy();
 
+		fps.setPause(false);
+
 	}
 
 	//<editor-fold desc="Essentials">
 	private int r(int i) {
-		return (int) Math.floor(((double) i) * ratio - .3);
+		return (int) Math.floor(((double) i) * ratio);
 	}
 
 	private int[] points() {
@@ -1019,7 +1024,7 @@ public class Interface extends Game {
 		drawImageCenter(popup, width / 2, height / 2);
 
 	}
-	
+
 	private void setImagesSmall() {
 
 		vacas = vacasR;
@@ -1040,9 +1045,9 @@ public class Interface extends Game {
 		btnVoltar = btnVoltarR;
 		btnConfigSmall = btnConfigSmallR;
 		btnDesistir = btnDesistirR;
-		
+
 	}
-	
+
 	private void setImagesBig() {
 
 		vacas = vacasO;
@@ -1063,7 +1068,7 @@ public class Interface extends Game {
 		btnVoltar = btnVoltarO;
 		btnConfigSmall = btnConfigSmallO;
 		btnDesistir = btnDesistirO;
-		
+
 	}
 	//</editor-fold>
 
@@ -1084,9 +1089,9 @@ public class Interface extends Game {
 
 	private void drawImageCenter(Image img, int x, int y) {
 
-		BufferedImage bimg = (BufferedImage) img;
+		BufferedImage bImg = toBufferedImage(img);
 
-		desenharImagem(img, x - bimg.getWidth() / 2, y - bimg.getHeight() / 2);
+		desenharImagem(img, x - bImg.getWidth() / 2, y - bImg.getHeight() / 2);
 
 	}
 
@@ -1117,13 +1122,6 @@ public class Interface extends Game {
 		g.drawString(text, x1, y1);
 	}
 
-	private Image getScaledBg() {
-
-		Image scaled = backGround.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-		return cropImage(scaled, 0, 0, width, height);
-
-	}
-
 	private Image cropImage(Image img, int x, int y, int width, int height) {
 
 		BufferedImage bimg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -1143,6 +1141,20 @@ public class Interface extends Game {
 
 	private boolean in(int x, int y, int xmin, int ymin, int size) {
 		return between(xmin, x, xmin + size) && between(ymin, y, ymin + size);
+	}
+
+	public static BufferedImage toBufferedImage(Image img) {
+		if (img instanceof BufferedImage) {
+			return (BufferedImage) img;
+		}
+
+		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D bGr = bimage.createGraphics();
+		bGr.drawImage(img, 0, 0, null);
+		bGr.dispose();
+
+		return bimage;
 	}
 	//</editor-fold>
 
