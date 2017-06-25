@@ -42,10 +42,9 @@ public class Interface extends Game {
 	private int maxHeight; // 1080
 	private int length; // 7
 	private int marginTop;
-	//	private int marginBottom;
 	private int marginLeft;
 	private int slotSize;
-	private int win = (int) Math.ceil(length * length / 2);
+	private int win = (int) Math.ceil(Math.pow(length, length) / 2);
 
 	/**
 	 * Variable that defines in what screen you are in.
@@ -91,12 +90,18 @@ public class Interface extends Game {
 	private boolean ratioBig;
 	private boolean ratioSmall;
 
+	private int mx = 0;
+	private int my = 0;
+
 	private Image logoBig;
 	private Image logoBigR;
 	private Image logoBigO;
 	private Image backGround;
 	private Image backGroundR;
 	private Image backGroundO;
+	private Image backGround2;
+	private Image backGround2R;
+	private Image backGround2O;
 	private Image popup;
 	private Image popupR;
 	private Image popupO;
@@ -175,6 +180,7 @@ public class Interface extends Game {
 		logoBigO = carregarImagem("images/logo-big.png");
 		logoSmallO = carregarImagem("images/logo-small.png");
 		backGroundO = carregarImagem("images/bg.png");
+		backGround2O = carregarImagem("images/bg2.png");
 		btnSingleO = carregarImagem("images/btn-single.png");
 		btnPersonalizarO = carregarImagem("images/btn-perso.png");
 		btnConfigO = carregarImagem("images/btn-config.png");
@@ -245,8 +251,8 @@ public class Interface extends Game {
 		fullscreen = ratioSmall;
 
 		vacasR = new Image[2];
-		vacasR[0] = vacasO[0].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
-		vacasR[1] = vacasO[1].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
+		vacasR[0] = vacasO[0].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
+		vacasR[1] = vacasO[1].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
 		placaresR = new Image[2];
 		placaresR[0] = placaresO[0].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		placaresR[1] = placaresO[1].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
@@ -257,6 +263,7 @@ public class Interface extends Game {
 		logoBigR = logoBigO.getScaledInstance(r(489), r(282), Image.SCALE_SMOOTH);
 		logoSmallR = logoSmallO.getScaledInstance(r(228), r(132), Image.SCALE_SMOOTH);
 		backGroundR = backGroundO.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
+		backGround2R = backGround2O.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
 		btnSingleR = btnSingleO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
 		btnPersonalizarR = btnPersonalizarO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
 		btnConfigR = btnConfigO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
@@ -272,8 +279,8 @@ public class Interface extends Game {
 		double prevRatio = ratio;
 		ratio = ((double) fullscrn.height) / maxHeight;
 
-		vacasO[0] = vacasO[0].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
-		vacasO[1] = vacasO[1].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
+		vacasO[0] = vacasO[0].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
+		vacasO[1] = vacasO[1].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
 		placaresO[0] = placaresO[0].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		placaresO[1] = placaresO[1].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		slotsO[0] = slotsO[0].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
@@ -282,6 +289,7 @@ public class Interface extends Game {
 		logoBigO = logoBigO.getScaledInstance(r(489), r(282), Image.SCALE_SMOOTH);
 		logoSmallO = logoSmallO.getScaledInstance(r(228), r(132), Image.SCALE_SMOOTH);
 		backGroundO = backGroundO.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
+		backGround2O = backGround2O.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
 		btnSingleO = btnSingleO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
 		btnPersonalizarO = btnPersonalizarO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
 		btnConfigO = btnConfigO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
@@ -302,10 +310,6 @@ public class Interface extends Game {
 	@Override
 	public void gameLoop() {
 
-//		System.out.println("a");
-
-		drawImageVertex(backGround, 0, 0);
-
 		switch (screen) {
 			//<editor-fold desc="Screen -1">
 			case -1:
@@ -313,6 +317,8 @@ public class Interface extends Game {
 			//</editor-fold>
 			//<editor-fold desc="Screen 0">
 			case 0: // tela inicial
+
+				drawImageVertex(backGround, 0, 0);
 
 				drawImageVertex(logoBig, r(715), r(25));
 
@@ -331,6 +337,8 @@ public class Interface extends Game {
 			//<editor-fold desc="Screen 1">
 			case 1: // configurações
 
+				drawImageVertex(backGround, 0, 0);
+
 				drawImageVertex(logoBig, r(715), r(25));
 
 				drawImageVertex(btnFacil, r(260), r(390));
@@ -345,6 +353,8 @@ public class Interface extends Game {
 			//</editor-fold>
 			//<editor-fold desc="Screen 2">
 			case 2:
+
+				drawImageVertex(backGround2, 0, 0);
 
 				drawImageVertex(logoSmall, r(845), r(14));
 
@@ -407,6 +417,8 @@ public class Interface extends Game {
 			}
 
 		}
+
+		drawImageCenter(btnConfigSmall, mx, my);
 
 	}
 
@@ -692,6 +704,12 @@ public class Interface extends Game {
 
 			int x = e.getX();
 			int y = e.getY();
+
+			mx = x;
+			my = y;
+
+			System.out.println(mx);
+			System.out.println(my);
 
 			switch (screen) {
 				case 0:
@@ -1038,6 +1056,7 @@ public class Interface extends Game {
 		logoBig = logoBigR;
 		logoSmall = logoSmallR;
 		backGround = backGroundR;
+		backGround2 = backGround2R;
 		btnSingle = btnSingleR;
 		btnPersonalizar = btnPersonalizarR;
 		btnConfig = btnConfigR;
@@ -1061,6 +1080,7 @@ public class Interface extends Game {
 		logoBig = logoBigO;
 		logoSmall = logoSmallO;
 		backGround = backGroundO;
+		backGround2 = backGround2O;
 		btnSingle = btnSingleO;
 		btnPersonalizar = btnPersonalizarO;
 		btnConfig = btnConfigO;
