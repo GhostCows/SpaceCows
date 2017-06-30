@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ import javax.swing.JPanel;
 public abstract class Game extends Canvas {
 	private static final long serialVersionUID = 6058040659371962305L;
 	protected JFrame container;
+	private JPanel panel;
 	protected BufferStrategy strategy;
 	protected boolean gameRunning = true;
 	private boolean sairAoTermino = false;
@@ -20,126 +22,128 @@ public abstract class Game extends Canvas {
 	protected Fps fps;
 	private Map<String, Mp3> musicas;
 	private Map<String, CustomFont> customFonts;
+	private Map<String, Cursor> cursors;
 
 	public Game() {
 		Dimension fullscreen = Toolkit.getDefaultToolkit().getScreenSize();
 		Utils.getInstance().setHeight(fullscreen.height);
 		Utils.getInstance().setWidth(fullscreen.width);
-		this.container = new JFrame(Utils.getInstance().getNomeJogo());
-		this.container.setUndecorated(true);
-		JPanel panel = (JPanel) this.container.getContentPane();
+		container = new JFrame(Utils.getInstance().getNomeJogo());
+		container.setUndecorated(true);
+		JPanel panel = (JPanel) container.getContentPane();
 		panel.setPreferredSize(new Dimension(Utils.getInstance().getWidth(), Utils.getInstance().getHeight()));
 		panel.setLayout(null);
-		this.setBounds(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
+		setBounds(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
 		panel.add(this);
-		this.setIgnoreRepaint(true);
-		this.container.pack();
-		this.container.setResizable(false);
-		this.container.addWindowListener(new WindowAdapter() {
+		setIgnoreRepaint(true);
+		container.pack();
+		container.setResizable(false);
+		container.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
 		});
-		this.fps = new Fps();
-		this.musicas = new HashMap();
-		this.customFonts = new HashMap();
-		this.init();
-		this.container.setVisible(true);
-		this.requestFocus();
-		this.createBufferStrategy(2);
-		this.strategy = this.getBufferStrategy();
+		fps = new Fps();
+		musicas = new HashMap();
+		customFonts = new HashMap();
+		init();
+		container.setVisible(true);
+		requestFocus();
+		createBufferStrategy(2);
+		strategy = getBufferStrategy();
 	}
 
 	public Game(String nomeJogo, int width, int height) {
 		Utils.getInstance().setNomeJogo(nomeJogo);
 		Utils.getInstance().setHeight(height);
 		Utils.getInstance().setWidth(width);
-		this.container = new JFrame(Utils.getInstance().getNomeJogo());
-		this.container.setUndecorated(true);
-		JPanel panel = (JPanel) this.container.getContentPane();
+		container = new JFrame(Utils.getInstance().getNomeJogo());
+		container.setUndecorated(true);
+		panel = (JPanel) container.getContentPane();
 		panel.setPreferredSize(new Dimension(Utils.getInstance().getWidth(), Utils.getInstance().getHeight()));
 		panel.setLayout(null);
-		this.setBounds(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
+		setBounds(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
 		panel.add(this);
-		this.setIgnoreRepaint(true);
-		this.container.pack();
-		this.container.setResizable(false);
-		this.container.addWindowListener(new WindowAdapter() {
+		setIgnoreRepaint(true);
+		container.pack();
+		container.setResizable(false);
+		container.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
 		});
-		this.fps = new Fps();
-		this.musicas = new HashMap();
-		this.customFonts = new HashMap();
-		this.init();
-		this.container.setLocationRelativeTo(null);
-		this.container.setVisible(true);
-		this.requestFocus();
-		this.createBufferStrategy(2);
-		this.strategy = this.getBufferStrategy();
+		fps = new Fps();
+		musicas = new HashMap<>();
+		customFonts = new HashMap<>();
+		cursors = new HashMap<>();
+		init();
+		container.setLocationRelativeTo(null);
+		container.setVisible(true);
+		requestFocus();
+		createBufferStrategy(2);
+		strategy = getBufferStrategy();
 	}
 
 	public abstract void init();
 
 	public void startGame() {
-		while (this.gameRunning) {
-			this.graphics2D = (Graphics2D) this.strategy.getDrawGraphics();
-			this.fps.updateFPS();
-			this.graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-			this.graphics2D.setColor(Color.white);
-			this.graphics2D.fillRect(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
-			this.gameLoop();
-			this.graphics2D.dispose();
-			this.strategy.show();
-			this.fps.synchronize(true);
+		while (gameRunning) {
+			graphics2D = (Graphics2D) strategy.getDrawGraphics();
+			fps.updateFPS();
+			graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+			graphics2D.setColor(Color.white);
+			graphics2D.fillRect(0, 0, Utils.getInstance().getWidth(), Utils.getInstance().getHeight());
+			gameLoop();
+			graphics2D.dispose();
+			strategy.show();
+			fps.synchronize(true);
 		}
 
-		this.aposTermino();
-		if (this.sairAoTermino) {
+		aposTermino();
+		if (sairAoTermino) {
 			System.exit(0);
 		}
 
 	}
 
 	public void desenharGif(Image image, int x, int y) {
-		this.graphics2D.drawImage(image, x, y, this.container);
+		graphics2D.drawImage(image, x, y, container);
 	}
 
 	public void desenharImagem(Image image, int x, int y) {
-		this.graphics2D.drawImage(image, x, y, (ImageObserver) null);
+		graphics2D.drawImage(image, x, y, (ImageObserver) null);
 	}
 
 	public void desenharString(String mensagem, int x, int y) {
 		FontMetrics fm = graphics2D.getFontMetrics();
-		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
+		graphics2D.drawString(mensagem, x, y + fm.getAscent());
 	}
 
 	public void desenharString(String mensagem, int x, int y, Color color) {
-		this.graphics2D.setColor(color);
+		graphics2D.setColor(color);
 		FontMetrics fm = graphics2D.getFontMetrics();
-		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
+		graphics2D.drawString(mensagem, x, y + fm.getAscent());
 	}
 
 	public void desenharString(String mensagem, int x, int y, Color color, int fontSize) {
-		this.graphics2D.setColor(color);
-		this.graphics2D.setFont(new Font("Arial", 1, fontSize));
+		graphics2D.setColor(color);
+		graphics2D.setFont(new Font("Arial", 0, fontSize));
 		FontMetrics fm = graphics2D.getFontMetrics();
-		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
+		graphics2D.drawString(mensagem, x, y + fm.getAscent());
 	}
 
 	public void desenharString(String mensagem, int x, int y, Color color, Font font) {
-		this.graphics2D.setColor(color);
-		this.graphics2D.setFont(font);
+		graphics2D.setColor(color);
+		graphics2D.setFont(font);
 		FontMetrics fm = graphics2D.getFontMetrics();
-		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
+		graphics2D.drawString(mensagem, x, y + fm.getAscent());
 	}
 
-	public void desenharString(String mensagem, int x, int y, Color color, int fontSize, Font font, int fontStyle) {
-		this.graphics2D.setColor(color);
-		this.graphics2D.setFont(font);
+	public void desenharString(String mensagem, int x, int y, Color color, int fontSize, Font font) {
+		graphics2D.setColor(color);
+		graphics2D.setFont(font.deriveFont((float) fontSize));
 		FontMetrics fm = graphics2D.getFontMetrics();
-		this.graphics2D.drawString(mensagem, x, y + fm.getAscent() - fm.getDescent() - fm.getLeading());
+		graphics2D.drawString(mensagem, x, y + fm.getAscent());
 	}
 
 	public Image carregarImagem(String path) {
@@ -147,7 +151,7 @@ public abstract class Game extends Canvas {
 	}
 
 	public void finalizarJogo() {
-		this.gameRunning = false;
+		gameRunning = false;
 	}
 
 	public abstract void aposTermino();
@@ -155,7 +159,7 @@ public abstract class Game extends Canvas {
 	public abstract void gameLoop();
 
 	public void sairAoTerminar() {
-		this.sairAoTermino = true;
+		sairAoTermino = true;
 	}
 
 	public void alterarFramesPorSegundos(int fps) {
@@ -165,55 +169,55 @@ public abstract class Game extends Canvas {
 	public void adicionarAudio(String nome, String path) {
 		Mp3 mp3 = new Mp3();
 		mp3.carregar(path);
-		if (this.musicas.get(nome) != null) {
-			this.musicas.remove(nome);
+		if (musicas.get(nome) != null) {
+			musicas.remove(nome);
 		}
 
-		this.musicas.put(nome, mp3);
+		musicas.put(nome, mp3);
 	}
 
 	public void tocarAudio(String nome) {
-		String audioName = this.musicas.get(nome).getAudioName();
-		this.musicas.remove(nome);
+		String audioName = musicas.get(nome).getAudioName();
+		musicas.remove(nome);
 		Mp3 mp3 = new Mp3();
 		mp3.carregar(audioName);
-		this.musicas.put(nome, mp3);
-		this.musicas.get(nome).iniciar();
+		musicas.put(nome, mp3);
+		musicas.get(nome).iniciar();
 	}
 
 	public void pararAudio(String nome) {
-		((Mp3) this.musicas.get(nome)).finalizar();
+		((Mp3) musicas.get(nome)).finalizar();
 	}
 
 	public boolean audioIsCompleted(String nome) {
-		return this.musicas.get(nome) != null ? ((Mp3) this.musicas.get(nome)).isCompleted() : true;
+		return musicas.get(nome) != null ? ((Mp3) musicas.get(nome)).isCompleted() : true;
 	}
 
 	public void removerAudio(String nome) {
-		this.musicas.remove(nome);
+		musicas.remove(nome);
 	}
 
 	public void desenharRetangulo(int x, int y, int width, int height, Color color) {
-		this.graphics2D.setColor(color);
-		this.graphics2D.fillRect(x, y, width, height);
+		graphics2D.setColor(color);
+		graphics2D.fillRect(x, y, width, height);
 	}
 
 	public void desenharCirculo(int x, int y, int width, int height, Color color) {
-		this.graphics2D.setColor(color);
-		this.graphics2D.fillOval(x, y, width, height);
+		graphics2D.setColor(color);
+		graphics2D.fillOval(x, y, width, height);
 	}
 
 	public void addNewFont(String name, String path, float size, int style) {
 		CustomFont cf = new CustomFont(path, size, style);
-		this.customFonts.put(name, cf);
+		customFonts.put(name, cf);
 	}
 
 	public void setFont(String name) {
-		this.graphics2D.setFont(((CustomFont) this.customFonts.get(name)).getCustomFont());
+		graphics2D.setFont(((CustomFont) customFonts.get(name)).getCustomFont());
 	}
 
 	public Graphics2D getGraphics2D() {
-		return this.graphics2D;
+		return graphics2D;
 	}
 
 	public int getWidth() {
@@ -227,6 +231,22 @@ public abstract class Game extends Canvas {
 	public Font getFont(String fontName) {
 
 		return customFonts.get(fontName).getCustomFont();
+
+	}
+
+	public void addCursor(String name, Image img, Point hotSpot) {
+
+		Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(img, hotSpot, name);
+
+		cursors.put(name, cursor);
+
+	}
+
+	public void setCursor(String cursorName) {
+
+		if(cursors.containsKey(cursorName)) {
+			panel.setCursor(cursors.get(cursorName));
+		}
 
 	}
 }
