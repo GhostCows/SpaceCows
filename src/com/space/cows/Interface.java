@@ -42,10 +42,9 @@ public class Interface extends Game {
 	private int maxHeight; // 1080
 	private int length; // 7
 	private int marginTop;
-	//	private int marginBottom;
 	private int marginLeft;
 	private int slotSize;
-	private int win = (int) Math.ceil(length * length / 2);
+	private int win = (int) Math.ceil(Math.pow(length, 2) / 2);
 
 	/**
 	 * Variable that defines in what screen you are in.
@@ -78,7 +77,7 @@ public class Interface extends Game {
 
 	private int isPopup = 0;
 
-	private String[] popups;
+	private String popupMsg;
 	private Runnable[] popupsAction;
 
 	private Font popupFont;
@@ -91,15 +90,34 @@ public class Interface extends Game {
 	private boolean ratioBig;
 	private boolean ratioSmall;
 
+	private int hoverX = 0;
+	private int hoverY = 0;
+	private int hoverT = -1;
+
+	private Runnable nr = () -> {
+	};
+
 	private Image logoBig;
 	private Image logoBigR;
 	private Image logoBigO;
 	private Image backGround;
 	private Image backGroundR;
 	private Image backGroundO;
+	private Image backGround2;
+	private Image backGround2R;
+	private Image backGround2O;
 	private Image popup;
 	private Image popupR;
 	private Image popupO;
+	private Image btnSim;
+	private Image btnSimR;
+	private Image btnSimO;
+	private Image btnNao;
+	private Image btnNaoR;
+	private Image btnNaoO;
+	private Image[] hovers;
+	private Image[] hoversR;
+	private Image[] hoversO;
 
 	//<editor-fold desc="Screen 0">
 	private Image btnSingle;
@@ -171,10 +189,17 @@ public class Interface extends Game {
 		slotsO[0] = carregarImagem("images/casa-clara.png");
 		slotsO[1] = carregarImagem("images/casa-escura.png");
 
+		hoversO = new Image[3];
+		hoversO[0] = carregarImagem("images/hover-big.png");
+		hoversO[2] = carregarImagem("images/hover-small.png");
+
+		btnSimO = carregarImagem("images/btn-sim.png");
+		btnNaoO = carregarImagem("images/btn-nao.png");
 		popupO = carregarImagem("images/popup.png");
 		logoBigO = carregarImagem("images/logo-big.png");
 		logoSmallO = carregarImagem("images/logo-small.png");
 		backGroundO = carregarImagem("images/bg.png");
+		backGround2O = carregarImagem("images/bg2.png");
 		btnSingleO = carregarImagem("images/btn-single.png");
 		btnPersonalizarO = carregarImagem("images/btn-perso.png");
 		btnConfigO = carregarImagem("images/btn-config.png");
@@ -196,14 +221,8 @@ public class Interface extends Game {
 
 		adicionarAudio("track", "audios/track.mp3");
 
-		popups = new String[2];
+		popupMsg = "";
 		popupsAction = new Runnable[2];
-
-		for (int i = 0; i < 2; i++) {
-
-			popups[i] = "";
-
-		}
 
 		width = 1156; // 1156
 		height = 650; // 650
@@ -231,7 +250,7 @@ public class Interface extends Game {
 
 		slotSize = 130;
 
-		popupFontSize = 26;
+		popupFontSize = 24;
 		addNewFont("popup", "fonts/popup.ttf", popupFontSize, 0);
 
 		popupFont = getFont("popup");
@@ -245,18 +264,24 @@ public class Interface extends Game {
 		fullscreen = ratioSmall;
 
 		vacasR = new Image[2];
-		vacasR[0] = vacasO[0].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
-		vacasR[1] = vacasO[1].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
+		vacasR[0] = vacasO[0].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
+		vacasR[1] = vacasO[1].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
 		placaresR = new Image[2];
 		placaresR[0] = placaresO[0].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		placaresR[1] = placaresO[1].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		slotsR = new Image[2];
 		slotsR[0] = slotsO[0].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
 		slotsR[1] = slotsO[1].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
+		hoversR = new Image[3];
+		hoversR[0] = hoversO[0].getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		hoversR[2] = hoversO[2].getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
+		btnSimR = btnSimO.getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
+		btnNaoR = btnNaoO.getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
 		popupR = popupO.getScaledInstance(r(595), r(333), Image.SCALE_SMOOTH);
 		logoBigR = logoBigO.getScaledInstance(r(489), r(282), Image.SCALE_SMOOTH);
 		logoSmallR = logoSmallO.getScaledInstance(r(228), r(132), Image.SCALE_SMOOTH);
 		backGroundR = backGroundO.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
+		backGround2R = backGround2O.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
 		btnSingleR = btnSingleO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
 		btnPersonalizarR = btnPersonalizarO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
 		btnConfigR = btnConfigO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
@@ -272,16 +297,21 @@ public class Interface extends Game {
 		double prevRatio = ratio;
 		ratio = ((double) fullscrn.height) / maxHeight;
 
-		vacasO[0] = vacasO[0].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
-		vacasO[1] = vacasO[1].getScaledInstance(r(201), r(195), Image.SCALE_SMOOTH);
+		vacasO[0] = vacasO[0].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
+		vacasO[1] = vacasO[1].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
 		placaresO[0] = placaresO[0].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		placaresO[1] = placaresO[1].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		slotsO[0] = slotsO[0].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
 		slotsO[1] = slotsO[1].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
+		hoversO[0] = hoversO[0].getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		hoversO[2] = hoversO[2].getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
+		btnSimO = btnSimO.getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
+		btnNaoO = btnNaoO.getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
 		popupO = popupO.getScaledInstance(r(595), r(333), Image.SCALE_SMOOTH);
 		logoBigO = logoBigO.getScaledInstance(r(489), r(282), Image.SCALE_SMOOTH);
 		logoSmallO = logoSmallO.getScaledInstance(r(228), r(132), Image.SCALE_SMOOTH);
 		backGroundO = backGroundO.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
+		backGround2O = backGround2O.getScaledInstance(r(1920) + 1, r(1080) + 1, Image.SCALE_SMOOTH);
 		btnSingleO = btnSingleO.getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
 		btnPersonalizarO = btnPersonalizarO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
 		btnConfigO = btnConfigO.getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
@@ -297,14 +327,14 @@ public class Interface extends Game {
 		ratio = prevRatio;
 
 		setImagesSmall();
+
+		addCursor("blank", carregarImagem("images/cursor.png"), new Point(0, 0));
+
+		setCursor("blank");
 	}
 
 	@Override
 	public void gameLoop() {
-
-//		System.out.println("a");
-
-		drawImageVertex(backGround, 0, 0);
 
 		switch (screen) {
 			//<editor-fold desc="Screen -1">
@@ -314,52 +344,58 @@ public class Interface extends Game {
 			//<editor-fold desc="Screen 0">
 			case 0: // tela inicial
 
-				drawImageVertex(logoBig, r(715), r(25));
+				drawImageVertex(backGround, 0, 0);
 
-				drawImageVertex(btnSingle, r(260), r(390));
+				drawImageVertex(logoBig, 715, 25);
 
-				drawImageVertex(btnPersonalizar, r(730), r(390));
+				drawImageVertex(btnSingle, 260, 390);
 
-				drawImageVertex(btnConfig, r(730), r(625));
+				drawImageVertex(btnPersonalizar, 730, 390);
 
-				drawImageVertex(btnDual, r(1200), r(390));
+				drawImageVertex(btnConfig, 730, 625);
 
-				drawImageVertex(btnSair, r(1430), r(875));
+				drawImageVertex(btnDual, 1200, 390);
+
+				drawImageVertex(btnSair, 1430, 875);
 
 				break;
 			//</editor-fold>
 			//<editor-fold desc="Screen 1">
 			case 1: // configurações
 
-				drawImageVertex(logoBig, r(715), r(25));
+				drawImageVertex(backGround, 0, 0);
 
-				drawImageVertex(btnFacil, r(260), r(390));
+				drawImageVertex(logoBig, 715, 25);
 
-				drawImageVertex(btnMedio, r(730), r(390));
+				drawImageVertex(btnFacil, 260, 390);
 
-				drawImageVertex(btnDificil, r(1200), r(390));
+				drawImageVertex(btnMedio, 730, 390);
 
-				drawImageVertex(btnVoltar, r(260), r(875));
+				drawImageVertex(btnDificil, 1200, 390);
+
+				drawImageVertex(btnVoltar, 260, 875);
 
 				break;
 			//</editor-fold>
 			//<editor-fold desc="Screen 2">
 			case 2:
 
-				drawImageVertex(logoSmall, r(845), r(14));
+				drawImageVertex(backGround2, 0, 0);
 
-				drawImageVertex(btnConfigSmall, r(764), r(80));
+				drawImageVertex(logoSmall, 845, 14);
 
-				drawImageVertex(placares[0], r(220), r(435));
-				drawImageVertex(placares[1], r(1440), r(435));
+				drawImageVertex(btnConfigSmall, 764, 80);
 
-				drawImageVertex(btnDesistir, r(285), r(610));
-				drawImageVertex(btnDesistir, r(1475), r(610));
+				drawImageVertex(placares[0], 220, 435);
+				drawImageVertex(placares[1], 1440, 435);
+
+				drawImageVertex(btnDesistir, 285, 610);
+				drawImageVertex(btnDesistir, 1475, 610);
 
 				int[] points = points();
 
-				desenharString(String.valueOf(points[0]), 0, height / 2, WHITE, 24);
-				desenharString(String.valueOf(points[1]), 0, height / 2 + 30, WHITE, 24);
+				drawCenteredString(String.valueOf(points[0]), 404, 570, popupFont, WHITE, 24);
+				drawCenteredString(String.valueOf(points[1]), 1514, 570, popupFont, WHITE, 24);
 
 				String msg = "O " + (farmerTurn == 1 ? "fazendeiro" : "alien") + " " + (gameEnd() ? "ganhou" : "deve jogar") + "!";
 
@@ -370,10 +406,8 @@ public class Interface extends Game {
 
 						Image slot = slots[(i + j) % 2];
 
-						int size = r(slotSize);
-
-						int x = r(marginLeft) + size * i;
-						int y = r(marginTop) + size * j;
+						int x = marginLeft + slotSize * i;
+						int y = marginTop + slotSize * j;
 
 						drawImageVertex(slot, x, y);
 
@@ -383,7 +417,7 @@ public class Interface extends Game {
 
 							Image cow = vacas[num - 1];
 
-							drawImageCenter(cow, x + size / 2, y + size / 2);
+							drawImageCenter(cow, x + slotSize / 2, y + slotSize / 2);
 
 						}
 
@@ -394,20 +428,26 @@ public class Interface extends Game {
 			//</editor-fold>
 		}
 
+		System.out.println(isPopup);
+
 		if (isPopup != 0) {
 
-			String pops = popups[isPopup - 1];
+			popup(popupMsg);
 
-			switch (isPopup) {
+			if (isPopup == 2) {
 
-				case 1:
-					popup(pops);
-					break;
+				drawImageVertex(btnSim, 844, 600);
+				drawImageVertex(btnNao, 968, 600);
 
 			}
 
 		}
 
+		if (hoverT >= 0) {
+
+			drawImageVertex(hovers[hoverT], hoverX, hoverY);
+
+		}
 	}
 
 	@Override
@@ -696,10 +736,72 @@ public class Interface extends Game {
 			switch (screen) {
 				case 0:
 
+					if (in(x, y, 260, 390, 460)) {
+						hoverT = 0;
+						hoverX = 260;
+						hoverY = 390;
+					} else if (in(x, y, 730, 390, 460, 225)) {
+						hoverT = 1;
+						hoverX = 730;
+						hoverY = 390;
+					} else if (in(x, y, 730, 625, 460, 225)) {
+						hoverT = 1;
+						hoverX = 730;
+						hoverY = 625;
+					} else if (in(x, y, 1200, 390, 460)) {
+						hoverT = 0;
+						hoverX = 1200;
+						hoverY = 390;
+					} else if (in(x, y, 1430, 875, 230, 113)) {
+						hoverT = 2;
+						hoverX = 1430;
+						hoverY = 875;
+					} else {
+						hoverT = -1;
+					}
+
 					break;
 				case 1:
+
+					if (in(x, y, 260, 390, 460)) {
+						hoverT = 0;
+						hoverX = 260;
+						hoverY = 390;
+					} else if (in(x, y, 730, 390, 460)) {
+						hoverT = 0;
+						hoverX = 730;
+						hoverY = 390;
+					} else if (in(x, y, 1200, 390, 460)) {
+						hoverT = 0;
+						hoverX = 1200;
+						hoverY = 390;
+					} else if (in(x, y, 260, 875, 230, 1313)) {
+						hoverT = 2;
+						hoverX = 260;
+						hoverY = 875;
+					} else {
+						hoverT = -1;
+					}
+
 					break;
 				case 2:
+
+					if (in(x, y, 285, 610, 161, 34)) {
+						hoverT = -1; //3
+						hoverX = 285;
+						hoverY = 610;
+					} else if (in(x, y, 1475, 610, 161, 34)) {
+						hoverT = -1; //3
+						hoverX = 1475;
+						hoverY = 610;
+					} else if (in(x, y, 764, 80, 57, 58)) {
+						hoverT = -1; //4
+						hoverX = 764;
+						hoverY = 80;
+					} else {
+						hoverT = -1;
+					}
+
 					break;
 			}
 
@@ -754,9 +856,22 @@ public class Interface extends Game {
 			System.out.println("X " + x);
 			System.out.println("Y " + y);
 
-			if (isPopup != 0) {
+			if (isPopup == 1) {
 
-				popupsAction[isPopup - 1].run();
+				popupsAction[0].run();
+
+			} else if (isPopup == 2) {
+
+				if (in(x, y, 844, 600, 108, 44)) {
+
+					popupsAction[0].run();
+
+				} else if (in(x, y, 968, 600, 108, 44)) {
+
+					popupsAction[1].run();
+
+				}
+
 				isPopup = 0;
 
 			} else {
@@ -772,6 +887,8 @@ public class Interface extends Game {
 
 							indexEE = 0;
 
+							hoverT = -1;
+
 						} else if (in(x, y, 730, 390, 460, 255)) {
 
 							//perso
@@ -784,10 +901,11 @@ public class Interface extends Game {
 
 							screen = 2;
 							gamemode = "PP";
+							hoverT = -1;
 
 						} else if (in(x, y, 1430, 875, 230, 113)) {
 
-							System.exit(0);
+							popup("Você deseja realmente sair?", () -> System.exit(0), nr);
 
 						} else if (in(x, y, 715, 25, 489, 282)) {
 
@@ -808,6 +926,7 @@ public class Interface extends Game {
 
 							difficulty = 0;
 							screen = 2;
+							hoverT = -1;
 
 							makeMove();
 
@@ -815,6 +934,7 @@ public class Interface extends Game {
 
 							difficulty = 1;
 							screen = 2;
+							hoverT = -1;
 
 							makeMove();
 
@@ -822,6 +942,7 @@ public class Interface extends Game {
 
 							difficulty = 2;
 							screen = 2;
+							hoverT = -1;
 
 							makeMove();
 
@@ -831,12 +952,14 @@ public class Interface extends Game {
 
 							if (indexEE == eeNum) {
 								gamemode = "CC";
+							} else if (indexEE > eeNum) {
+								gamemode = "PC";
 							}
 
 						} else if (in(x, y, 260, 875, 230, 113)) {
 
 							screen = 0;
-
+							hoverT = -1;
 							indexEE = 0;
 
 						}
@@ -858,6 +981,24 @@ public class Interface extends Game {
 
 							makeMove(sX, sY);
 
+						} else if (in(x, y, 285, 610, 161, 34) && farmerTurn == 1) {
+
+							popup("Você realmente não aguenta\nesses alienígenas?", () -> {
+
+								screen = 0;
+								board = new int[length][length];
+
+							}, nr);
+
+						} else if (in(x, y, 1475, 610, 161, 34) && farmerTurn == 0) {
+
+							popup("Você realmente não aguente\nesses terrestres?", () -> {
+
+								screen = 0;
+								board = new int[length][length];
+
+							}, nr);
+
 						}
 
 						break;
@@ -876,9 +1017,9 @@ public class Interface extends Game {
 
 			System.out.println(code);
 
-			if (isPopup != 0) {
+			if (isPopup == 1) {
 
-				popupsAction[isPopup - 1].run();
+				popupsAction[0].run();
 				isPopup = 0;
 
 
@@ -892,11 +1033,13 @@ public class Interface extends Game {
 						board = new int[length][length];
 
 						if (screen <= 0) {
-							System.exit(0);
+
+							popup("Você deseja realmente sair?", () -> System.exit(0), nr);
+
 						} else {
+
 							screen = 0;
 							board = new int[length][length];
-
 
 						}
 						break;
@@ -1003,9 +1146,19 @@ public class Interface extends Game {
 	private void popup(String msg, Runnable confirm) {
 
 		isPopup = 1;
-		popups[0] = msg;
+		popupMsg = msg;
 
 		popupsAction[0] = confirm;
+
+	}
+
+	private void popup(String msg, Runnable yes, Runnable no) {
+
+		isPopup = 2;
+		popupMsg = msg;
+
+		popupsAction[0] = yes;
+		popupsAction[1] = no;
 
 	}
 
@@ -1015,17 +1168,19 @@ public class Interface extends Game {
 
 		int x = (width / 2) - r(596 / 2) + r(64);
 
-		int y = (height / 2) - r(333 / 2) + r(107);
+		int y = (height / 2) - r(333 / 2) + r(102);
 
-		desenharString(msg, x, y, BLACK, popupFont);
+		drawString(msg, x, y, BLACK, popupFontSize, popupFont);
+
+//		desenharString(msg, x, y, BLACK, popupFont);
 
 	}
 
 	private void popupBox() {
 
-		drawRectVertex(0, 0, width, height * 2, new Color(0, 0, 0, 150));
+		drawRectVertexI(0, 0, width, height, new Color(0, 0, 0, 150));
 
-		drawImageCenter(popup, width / 2, height / 2);
+		drawImageCenterI(popup, width / 2, height / 2);
 
 	}
 
@@ -1034,10 +1189,12 @@ public class Interface extends Game {
 		vacas = vacasR;
 		placares = placaresR;
 		slots = slotsR;
+		hovers = hoversR;
 		popup = popupR;
 		logoBig = logoBigR;
 		logoSmall = logoSmallR;
 		backGround = backGroundR;
+		backGround2 = backGround2R;
 		btnSingle = btnSingleR;
 		btnPersonalizar = btnPersonalizarR;
 		btnConfig = btnConfigR;
@@ -1049,6 +1206,8 @@ public class Interface extends Game {
 		btnVoltar = btnVoltarR;
 		btnConfigSmall = btnConfigSmallR;
 		btnDesistir = btnDesistirR;
+		btnSim = btnSimR;
+		btnNao = btnNaoR;
 
 	}
 
@@ -1057,10 +1216,12 @@ public class Interface extends Game {
 		vacas = vacasO;
 		placares = placaresO;
 		slots = slotsO;
+		hovers = hoversO;
 		popup = popupO;
 		logoBig = logoBigO;
 		logoSmall = logoSmallO;
 		backGround = backGroundO;
+		backGround2 = backGround2O;
 		btnSingle = btnSingleO;
 		btnPersonalizar = btnPersonalizarO;
 		btnConfig = btnConfigO;
@@ -1072,6 +1233,8 @@ public class Interface extends Game {
 		btnVoltar = btnVoltarO;
 		btnConfigSmall = btnConfigSmallO;
 		btnDesistir = btnDesistirO;
+		btnSim = btnSimO;
+		btnNao = btnNaoO;
 
 	}
 	//</editor-fold>
@@ -1085,13 +1248,15 @@ public class Interface extends Game {
 		return Math.max(n, m);
 	}
 
-	private void drawBG() {
+	private void drawImageCenter(Image img, int x, int y) {
 
-		desenharRetangulo(0, 0, 1040, 650, new Color(18, 18, 18));
+		BufferedImage bImg = toBufferedImage(img);
+
+		desenharImagem(img, r(x) - bImg.getWidth() / 2, r(y) - bImg.getHeight() / 2);
 
 	}
 
-	private void drawImageCenter(Image img, int x, int y) {
+	private void drawImageCenterI(Image img, int x, int y) {
 
 		BufferedImage bImg = toBufferedImage(img);
 
@@ -1101,21 +1266,29 @@ public class Interface extends Game {
 
 	private void drawImageVertex(Image img, int x, int y) {
 
-		desenharImagem(img, x, y);
+		desenharImagem(img, r(x), r(y));
 
 	}
 
 	private void drawRectVertex(int x, int y, int width, int height, Color c) {
 
-		desenharRetangulo(x, y, height, width, c);
+		desenharRetangulo(r(x), r(y), r(height), r(width), c);
 
 	}
 
-	private void drawCenteredString(String text, int x, int y, int width, int height, Font font) {
-		Graphics2D g = getGraphics2D();
-		FontMetrics metrics = g.getFontMetrics(font);
-		int x1 = x + (width - metrics.stringWidth(text)) / 2;
-		int y1 = y + ((height - metrics.getHeight()) / 2) + metrics.getAscent();
+	private void drawRectVertexI(int x, int y, int width, int height, Color c) {
+
+		desenharRetangulo(x, y, width, height, c);
+
+	}
+
+	private void drawCenteredString(String text, int x, int y, Font font, Color color, int size) {
+		Graphics2D g = graphics2D;
+		g.setColor(color);
+		font = font.deriveFont((float) size);
+		FontMetrics fm = g.getFontMetrics(font);
+		int x1 = r(x) - fm.stringWidth(text) / 2;
+		int y1 = r(y) - fm.getHeight() / 2 + fm.getAscent();
 		g.setFont(font);
 		g.drawString(text, x1, y1);
 	}
@@ -1132,7 +1305,7 @@ public class Interface extends Game {
 		return between(xmin, x, xmin + size) && between(ymin, y, ymin + size);
 	}
 
-	public static BufferedImage toBufferedImage(Image img) {
+	private static BufferedImage toBufferedImage(Image img) {
 		if (img instanceof BufferedImage) {
 			return (BufferedImage) img;
 		}
@@ -1144,6 +1317,15 @@ public class Interface extends Game {
 		bGr.dispose();
 
 		return bimage;
+	}
+
+	private void drawString(String text, int x, int y, Color color, int fontSize, Font font) {
+		for (String line : text.split("\n")) {
+
+			desenharString(line, x, y, color, fontSize, font);
+			y += graphics2D.getFontMetrics(font).getHeight();
+
+		}
 	}
 	//</editor-fold>
 
