@@ -166,7 +166,7 @@ public abstract class Game extends Canvas {
 		this.fps = new Fps(fps);
 	}
 
-	public void adicionarAudio(String nome, String path) {
+	/*public void adicionarAudio(String nome, String path) {
 		Mp3 mp3 = new Mp3();
 		mp3.carregar(path);
 		if (musicas.get(nome) != null) {
@@ -191,11 +191,11 @@ public abstract class Game extends Canvas {
 
 	public boolean audioIsCompleted(String nome) {
 		return musicas.get(nome) != null ? ((Mp3) musicas.get(nome)).isCompleted() : true;
-	}
+	}*
 
 	public void removerAudio(String nome) {
 		musicas.remove(nome);
-	}
+	}*/
 
 	public void desenharRetangulo(int x, int y, int width, int height, Color color) {
 		graphics2D.setColor(color);

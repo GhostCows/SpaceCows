@@ -3,6 +3,7 @@ package br.senai.sc.engine;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URI;
 import java.net.URL;
 import javazoom.jl.player.Player;
 
@@ -11,13 +12,14 @@ public class Mp3 extends Thread {
 	private Player player;
 	private String audioName;
 
-	public Mp3() {
-	}
-
-	public void carregar(String caminho) {
-		this.audioName = caminho;
-		URL path = this.getClass().getClassLoader().getResource(caminho);
-		this.mp3 = new File(path.getFile());
+	public Mp3(String caminho) {
+		try {
+			this.audioName = caminho;
+			URL path = this.getClass().getClassLoader().getResource(caminho);
+			this.mp3 = new File(path.toURI());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public String getAudioName() {

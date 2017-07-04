@@ -1,12 +1,20 @@
 package com.space.cows;
 
 import br.senai.sc.engine.Game;
+import br.senai.sc.engine.Mp3;
 import br.senai.sc.engine.Utils;
+import javazoom.jl.player.Player;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URL;
 import java.util.*;
 import java.util.Timer;
 
@@ -96,6 +104,10 @@ public class Interface extends Game {
 
 	private Runnable nr = () -> {
 	};
+
+	private Clip go;
+	private Clip back;
+	private Mp3 track;
 
 	private Image logoBig;
 	private Image logoBigR;
@@ -189,9 +201,15 @@ public class Interface extends Game {
 		slotsO[0] = carregarImagem("images/casa-clara.png");
 		slotsO[1] = carregarImagem("images/casa-escura.png");
 
-		hoversO = new Image[3];
+		hoversO = new Image[8];
 		hoversO[0] = carregarImagem("images/hover-big.png");
+		hoversO[1] = carregarImagem("images/hover-medium.png");
 		hoversO[2] = carregarImagem("images/hover-small.png");
+		hoversO[3] = carregarImagem("images/hover-config-small.png");
+		hoversO[4] = carregarImagem("images/hover-confirm.png");
+		hoversO[5] = carregarImagem("images/hover-desistir.png");
+		hoversO[6] = carregarImagem("images/hover-placar.png");
+		hoversO[7] = carregarImagem("images/hover-placar-2.png");
 
 		btnSimO = carregarImagem("images/btn-sim.png");
 		btnNaoO = carregarImagem("images/btn-nao.png");
@@ -212,23 +230,25 @@ public class Interface extends Game {
 		btnConfigSmallO = carregarImagem("images/btn-config-small.png");
 		btnDesistirO = carregarImagem("images/btn-desistir.png");
 
-//		container.setIconImage(carregarImagem("images/icon.jpg"));
+		container.setIconImage(carregarImagem("images/icon.png"));
 
 		prevs = new int[2][2];
 
 		prevs[0] = new int[]{-1, -1};
 		prevs[1] = new int[]{-1, -1};
 
-		adicionarAudio("track", "audios/track.mp3");
+		go = loadWav("audios/btn-1.wav");
+		back = loadWav("audios/btn-2.wav");
+		track = new Mp3("audios/track.mp3");
 
 		popupMsg = "";
 		popupsAction = new Runnable[2];
 
-		width = 1156; // 1156
-		height = 650; // 650
+		width = 1156;
+		height = 650;
 
-		maxWidth = 1920; // 1920
-		maxHeight = 1080; // 1080
+		maxWidth = 1920;
+		maxHeight = 1080;
 
 		size = new Dimension(width, height);
 
@@ -250,7 +270,7 @@ public class Interface extends Game {
 
 		slotSize = 130;
 
-		popupFontSize = 24;
+		popupFontSize = r(40);
 		addNewFont("popup", "fonts/popup.ttf", popupFontSize, 0);
 
 		popupFont = getFont("popup");
@@ -267,14 +287,20 @@ public class Interface extends Game {
 		vacasR[0] = vacasO[0].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
 		vacasR[1] = vacasO[1].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
 		placaresR = new Image[2];
-		placaresR[0] = placaresO[0].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
+		placaresR[0] = placaresO[0].getScaledInstance(r(258), r(172), Image.SCALE_SMOOTH);
 		placaresR[1] = placaresO[1].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		slotsR = new Image[2];
 		slotsR[0] = slotsO[0].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
 		slotsR[1] = slotsO[1].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
-		hoversR = new Image[3];
+		hoversR = new Image[8];
 		hoversR[0] = hoversO[0].getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		hoversR[1] = hoversO[1].getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
 		hoversR[2] = hoversO[2].getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
+		hoversR[3] = hoversO[3].getScaledInstance(r(57), r(58), Image.SCALE_SMOOTH);
+		hoversR[4] = hoversO[4].getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
+		hoversR[5] = hoversO[5].getScaledInstance(r(161), r(34), Image.SCALE_SMOOTH);
+		hoversR[6] = hoversO[6].getScaledInstance(r(258), r(172), Image.SCALE_SMOOTH);
+		hoversR[7] = hoversO[7].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		btnSimR = btnSimO.getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
 		btnNaoR = btnNaoO.getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
 		popupR = popupO.getScaledInstance(r(595), r(333), Image.SCALE_SMOOTH);
@@ -299,12 +325,18 @@ public class Interface extends Game {
 
 		vacasO[0] = vacasO[0].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
 		vacasO[1] = vacasO[1].getScaledInstance(r(129), r(104), Image.SCALE_SMOOTH);
-		placaresO[0] = placaresO[0].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
+		placaresO[0] = placaresO[0].getScaledInstance(r(258), r(172), Image.SCALE_SMOOTH);
 		placaresO[1] = placaresO[1].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		slotsO[0] = slotsO[0].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
 		slotsO[1] = slotsO[1].getScaledInstance(r(130), r(130), Image.SCALE_SMOOTH);
 		hoversO[0] = hoversO[0].getScaledInstance(r(460), r(460), Image.SCALE_SMOOTH);
+		hoversO[1] = hoversO[1].getScaledInstance(r(460), r(225), Image.SCALE_SMOOTH);
 		hoversO[2] = hoversO[2].getScaledInstance(r(230), r(113), Image.SCALE_SMOOTH);
+		hoversO[3] = hoversO[3].getScaledInstance(r(57), r(58), Image.SCALE_SMOOTH);
+		hoversO[4] = hoversO[4].getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
+		hoversO[5] = hoversO[5].getScaledInstance(r(161), r(34), Image.SCALE_SMOOTH);
+		hoversO[6] = hoversO[6].getScaledInstance(r(258), r(172), Image.SCALE_SMOOTH);
+		hoversO[7] = hoversO[7].getScaledInstance(r(260), r(173), Image.SCALE_SMOOTH);
 		btnSimO = btnSimO.getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
 		btnNaoO = btnNaoO.getScaledInstance(r(108), r(44), Image.SCALE_SMOOTH);
 		popupO = popupO.getScaledInstance(r(595), r(333), Image.SCALE_SMOOTH);
@@ -328,7 +360,7 @@ public class Interface extends Game {
 
 		setImagesSmall();
 
-		addCursor("blank", carregarImagem("images/cursor.png"), new Point(0, 0));
+		addCursor("blank", carregarImagem("images/cursor-2.png"), new Point(5, 5));
 
 		setCursor("blank");
 	}
@@ -397,9 +429,15 @@ public class Interface extends Game {
 				drawCenteredString(String.valueOf(points[0]), 404, 570, popupFont, WHITE, 24);
 				drawCenteredString(String.valueOf(points[1]), 1514, 570, popupFont, WHITE, 24);
 
-				String msg = "O " + (farmerTurn == 1 ? "fazendeiro" : "alien") + " " + (gameEnd() ? "ganhou" : "deve jogar") + "!";
+				if (farmerTurn == 1) {
 
-				desenharString(msg, 0, 0);
+					drawImageVertex(hovers[6], 220, 435);
+
+				} else {
+
+					drawImageVertex(hovers[7], 1440, 435);
+
+				}
 
 				for (int i = 0; i < length; i++) {
 					for (int j = 0; j < length; j++) {
@@ -427,8 +465,6 @@ public class Interface extends Game {
 				break;
 			//</editor-fold>
 		}
-
-		System.out.println(isPopup);
 
 		if (isPopup != 0) {
 
@@ -489,7 +525,7 @@ public class Interface extends Game {
 
 			} else {
 				// Alert player to play only on free vacas
-				popup("Você só pode jogar em vacas vazios", () -> {
+				popup("Não toque nas vacas", () -> {
 				});
 			}
 		} else {
@@ -733,76 +769,96 @@ public class Interface extends Game {
 			int x = e.getX();
 			int y = e.getY();
 
-			switch (screen) {
-				case 0:
+			if (isPopup == 2) {
 
-					if (in(x, y, 260, 390, 460)) {
-						hoverT = 0;
-						hoverX = 260;
-						hoverY = 390;
-					} else if (in(x, y, 730, 390, 460, 225)) {
-						hoverT = 1;
-						hoverX = 730;
-						hoverY = 390;
-					} else if (in(x, y, 730, 625, 460, 225)) {
-						hoverT = 1;
-						hoverX = 730;
-						hoverY = 625;
-					} else if (in(x, y, 1200, 390, 460)) {
-						hoverT = 0;
-						hoverX = 1200;
-						hoverY = 390;
-					} else if (in(x, y, 1430, 875, 230, 113)) {
-						hoverT = 2;
-						hoverX = 1430;
-						hoverY = 875;
-					} else {
-						hoverT = -1;
-					}
+				if (in(x, y, 844, 600, 108, 44)) {
 
-					break;
-				case 1:
+					hoverX = 844;
+					hoverY = 600;
+					hoverT = 4;
 
-					if (in(x, y, 260, 390, 460)) {
-						hoverT = 0;
-						hoverX = 260;
-						hoverY = 390;
-					} else if (in(x, y, 730, 390, 460)) {
-						hoverT = 0;
-						hoverX = 730;
-						hoverY = 390;
-					} else if (in(x, y, 1200, 390, 460)) {
-						hoverT = 0;
-						hoverX = 1200;
-						hoverY = 390;
-					} else if (in(x, y, 260, 875, 230, 1313)) {
-						hoverT = 2;
-						hoverX = 260;
-						hoverY = 875;
-					} else {
-						hoverT = -1;
-					}
+				} else if (in(x, y, 968, 600, 108, 44)) {
 
-					break;
-				case 2:
+					hoverX = 968;
+					hoverY = 600;
+					hoverT = 4;
 
-					if (in(x, y, 285, 610, 161, 34)) {
-						hoverT = -1; //3
-						hoverX = 285;
-						hoverY = 610;
-					} else if (in(x, y, 1475, 610, 161, 34)) {
-						hoverT = -1; //3
-						hoverX = 1475;
-						hoverY = 610;
-					} else if (in(x, y, 764, 80, 57, 58)) {
-						hoverT = -1; //4
-						hoverX = 764;
-						hoverY = 80;
-					} else {
-						hoverT = -1;
-					}
+				} else {
+					hoverT = -1;
+				}
 
-					break;
+			} else {
+				switch (screen) {
+					case 0:
+
+						if (in(x, y, 260, 390, 460)) {
+							hoverT = 0;
+							hoverX = 260;
+							hoverY = 390;
+						} else if (in(x, y, 730, 390, 460, 225)) {
+							hoverT = 1;
+							hoverX = 730;
+							hoverY = 390;
+						} else if (in(x, y, 730, 625, 460, 225)) {
+							hoverT = 1;
+							hoverX = 730;
+							hoverY = 625;
+						} else if (in(x, y, 1200, 390, 460)) {
+							hoverT = 0;
+							hoverX = 1200;
+							hoverY = 390;
+						} else if (in(x, y, 1430, 875, 230, 113)) {
+							hoverT = 2;
+							hoverX = 1430;
+							hoverY = 875;
+						} else {
+							hoverT = -1;
+						}
+
+						break;
+					case 1:
+
+						if (in(x, y, 260, 390, 460)) {
+							hoverT = 0;
+							hoverX = 260;
+							hoverY = 390;
+						} else if (in(x, y, 730, 390, 460)) {
+							hoverT = 0;
+							hoverX = 730;
+							hoverY = 390;
+						} else if (in(x, y, 1200, 390, 460)) {
+							hoverT = 0;
+							hoverX = 1200;
+							hoverY = 390;
+						} else if (in(x, y, 260, 875, 230, 1313)) {
+							hoverT = 2;
+							hoverX = 260;
+							hoverY = 875;
+						} else {
+							hoverT = -1;
+						}
+
+						break;
+					case 2:
+
+						if (in(x, y, 285, 610, 161, 34)) {
+							hoverT = 5;
+							hoverX = 285;
+							hoverY = 610;
+						} else if (in(x, y, 1475, 610, 161, 34)) {
+							hoverT = 5;
+							hoverX = 1475;
+							hoverY = 610;
+						} else if (in(x, y, 764, 80, 57, 58)) {
+							hoverT = 3;
+							hoverX = 764;
+							hoverY = 80;
+						} else {
+							hoverT = -1;
+						}
+
+						break;
+				}
 			}
 
 		}
@@ -860,6 +916,10 @@ public class Interface extends Game {
 
 				popupsAction[0].run();
 
+				isPopup = 0;
+
+				hoverT = -1;
+
 			} else if (isPopup == 2) {
 
 				if (in(x, y, 844, 600, 108, 44)) {
@@ -873,6 +933,8 @@ public class Interface extends Game {
 				}
 
 				isPopup = 0;
+
+				hoverT = -1;
 
 			} else {
 
@@ -889,9 +951,11 @@ public class Interface extends Game {
 
 							hoverT = -1;
 
+							playWav(go);
+
 						} else if (in(x, y, 730, 390, 460, 255)) {
 
-							//perso
+							//créditos
 
 						} else if (in(x, y, 730, 625, 460, 255)) {
 
@@ -903,15 +967,25 @@ public class Interface extends Game {
 							gamemode = "PP";
 							hoverT = -1;
 
+							playWav(go);
+
 						} else if (in(x, y, 1430, 875, 230, 113)) {
 
-							popup("Você deseja realmente sair?", () -> System.exit(0), nr);
+							popup("Você deseja realmente sair?", () -> {
+								playWav(back);
+								System.exit(0);
+							}, nr);
+
+							playWav(back);
 
 						} else if (in(x, y, 715, 25, 489, 282)) {
 
 							if (indexEE++ == eeNum - 1) {
 
-								popup("Cuidado, Vacas Mordem", () -> indexEE = 0);
+								popup("Cuidado, Vacas Mordem", () -> {
+									indexEE = 0;
+									playWav(back); //mugido
+								});
 
 							}
 
@@ -981,18 +1055,10 @@ public class Interface extends Game {
 
 							makeMove(sX, sY);
 
-						} else if (in(x, y, 285, 610, 161, 34) && farmerTurn == 1) {
+						} else if ((in(x, y, 285, 610, 161, 34) && farmerTurn == 1) ||
+								(in(x, y, 1475, 610, 161, 34) && farmerTurn == 0)) {
 
-							popup("Você realmente não aguenta\nesses alienígenas?", () -> {
-
-								screen = 0;
-								board = new int[length][length];
-
-							}, nr);
-
-						} else if (in(x, y, 1475, 610, 161, 34) && farmerTurn == 0) {
-
-							popup("Você realmente não aguente\nesses terrestres?", () -> {
+							popup("Você é uma desonra pra tu,\npra tua família e para tua vaca", () -> {
 
 								screen = 0;
 								board = new int[length][length];
@@ -1032,7 +1098,13 @@ public class Interface extends Game {
 
 						board = new int[length][length];
 
-						if (screen <= 0) {
+						if (isPopup == 2) {
+
+							popupsAction[1].run();
+							isPopup = 0;
+							hoverT = -1;
+
+						} else if (screen <= 0) {
 
 							popup("Você deseja realmente sair?", () -> System.exit(0), nr);
 
@@ -1046,6 +1118,15 @@ public class Interface extends Game {
 					case KeyEvent.VK_F11:
 						if (!ratioSmall) {
 							fullscreen();
+						}
+						break;
+					case KeyEvent.VK_ENTER:
+						if (isPopup == 2) {
+
+							popupsAction[0].run();
+							isPopup = 0;
+							hoverT = -1;
+
 						}
 						break;
 				}
@@ -1145,6 +1226,8 @@ public class Interface extends Game {
 
 	private void popup(String msg, Runnable confirm) {
 
+		hoverT = -1;
+
 		isPopup = 1;
 		popupMsg = msg;
 
@@ -1153,6 +1236,8 @@ public class Interface extends Game {
 	}
 
 	private void popup(String msg, Runnable yes, Runnable no) {
+
+		hoverT = -1;
 
 		isPopup = 2;
 		popupMsg = msg;
@@ -1326,6 +1411,24 @@ public class Interface extends Game {
 			y += graphics2D.getFontMetrics(font).getHeight();
 
 		}
+	}
+
+	private Clip loadWav(String filename) {
+		Clip clip = null;
+		try {
+			URL url = getClass().getClassLoader().getResource(filename);
+			AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(url);
+			clip = AudioSystem.getClip();
+			clip.open(audioInputStream);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return clip;
+	}
+
+	private void playWav(Clip clip) {
+		clip.setFramePosition(0);
+		clip.start();
 	}
 	//</editor-fold>
 
