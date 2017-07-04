@@ -240,6 +240,7 @@ public class Interface extends Game {
 		go = loadWav("audios/btn-1.wav");
 		back = loadWav("audios/btn-2.wav");
 		track = new Mp3("audios/track.mp3");
+		track.start();
 
 		popupMsg = "";
 		popupsAction = new Runnable[2];
@@ -367,6 +368,12 @@ public class Interface extends Game {
 
 	@Override
 	public void gameLoop() {
+
+		if(track.isCompleted()) {
+			track.finalizar();
+			track = new Mp3("audios/track.mp3");
+			track.start();
+		}
 
 		switch (screen) {
 			//<editor-fold desc="Screen -1">
